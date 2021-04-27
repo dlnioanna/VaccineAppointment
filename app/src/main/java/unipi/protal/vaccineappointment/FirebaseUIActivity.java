@@ -3,6 +3,7 @@ package unipi.protal.vaccineappointment;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -13,19 +14,22 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-
+import androidx.databinding.DataBindingUtil;
+import unipi.protal.vaccineappointment.databinding.ActivityFirebaseUiBinding;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
 public class FirebaseUIActivity extends AppCompatActivity {
-
+private ActivityFirebaseUiBinding binding;
     private static final int RC_SIGN_IN = 123;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_firebase_ui);
+        binding = ActivityFirebaseUiBinding.inflate(getLayoutInflater());
+        View view = binding.getRoot();
+        setContentView(view);
         createSignInIntent();
     }
 
@@ -40,6 +44,8 @@ public class FirebaseUIActivity extends AppCompatActivity {
         startActivityForResult(
                 AuthUI.getInstance()
                         .createSignInIntentBuilder()
+                        .setLogo(R.drawable.ic_banner_virus)      // Set logo drawable
+                        .setTheme(R.style.firebaseUIStyle)      // Set theme
                         .setAvailableProviders(providers)
                         .build(),
                 RC_SIGN_IN);
@@ -57,6 +63,7 @@ public class FirebaseUIActivity extends AppCompatActivity {
             if (resultCode == RESULT_OK) {
                 // Successfully signed in
                 FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+                binding.name.setText(user.getDisplayName());
                 Log.e("firebase user logged in",user.getDisplayName());
             } else {
                 // Sign in failed. If response is null the user canceled the
@@ -94,33 +101,5 @@ public class FirebaseUIActivity extends AppCompatActivity {
         // [END auth_fui_delete]
     }
 
-    public void themeAndLogo() {
-        List<AuthUI.IdpConfig> providers = Collections.emptyList();
 
-        // [START auth_fui_theme_logo]
-        startActivityForResult(
-                AuthUI.getInstance()
-                        .createSignInIntentBuilder()
-                        .setAvailableProviders(providers)
-         //               .setLogo(R.drawable.my_great_logo)      // Set logo drawable
-           //             .setTheme(R.style.MySuperAppTheme)      // Set theme
-                        .build(),
-                RC_SIGN_IN);
-        // [END auth_fui_theme_logo]
-    }
-
-    public void privacyAndTerms() {
-        List<AuthUI.IdpConfig> providers = Collections.emptyList();
-        // [START auth_fui_pp_tos]
-        startActivityForResult(
-                AuthUI.getInstance()
-                        .createSignInIntentBuilder()
-                        .setAvailableProviders(providers)
-                        .setTosAndPrivacyPolicyUrls(
-                                "https://example.com/terms.html",
-                                "https://example.com/privacy.html")
-                        .build(),
-                RC_SIGN_IN);
-        // [END auth_fui_pp_tos]
-    }
 }

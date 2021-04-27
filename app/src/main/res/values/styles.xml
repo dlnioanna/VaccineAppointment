@@ -1,6 +1,6 @@
-<resources xmlns:tools="http://schemas.android.com/tools">
-    <!-- Base application theme. -->
-    <style name="Theme.VaccineAppointment" parent="Theme.MaterialComponents.Light.DarkActionBar">
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="firebaseUIStyle" parent="Theme.MaterialComponents.Light.DarkActionBar">
         <!-- Primary brand color. -->
         <item name="colorPrimary">#1476C5</item>
         <item name="colorPrimaryVariant">#004D8A</item>
@@ -9,8 +9,7 @@
         <item name="colorSecondary">@color/teal_200</item>
         <item name="colorSecondaryVariant">@color/teal_200</item>
         <item name="colorOnSecondary">@color/black</item>
-<!--         Status bar color.-->
-        <item name="android:statusBarColor" tools:targetApi="l">#004D8A</item>
-<!--         Customize your theme here.-->
+        <!--         Status bar color.-->
+        <item name="android:statusBarColor">#004D8A</item>
     </style>
 </resources>
