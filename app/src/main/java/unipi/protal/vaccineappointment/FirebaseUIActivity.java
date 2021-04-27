@@ -30,6 +30,13 @@ private ActivityFirebaseUiBinding binding;
         binding = ActivityFirebaseUiBinding.inflate(getLayoutInflater());
         View view = binding.getRoot();
         setContentView(view);
+
+
+
+
+
+
+
         createSignInIntent();
     }
 
@@ -63,7 +70,7 @@ private ActivityFirebaseUiBinding binding;
             if (resultCode == RESULT_OK) {
                 // Successfully signed in
                 FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-                binding.name.setText(user.getDisplayName());
+                binding.userName.setText(user.getDisplayName());
                 Log.e("firebase user logged in",user.getDisplayName());
             } else {
                 // Sign in failed. If response is null the user canceled the
