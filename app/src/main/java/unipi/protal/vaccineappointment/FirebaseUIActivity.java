@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -30,12 +31,16 @@ private ActivityFirebaseUiBinding binding;
         binding = ActivityFirebaseUiBinding.inflate(getLayoutInflater());
         View view = binding.getRoot();
         setContentView(view);
-
-
-
-
-
-
+        binding.userName.setVisibility(View.GONE);
+        binding.findHospital.setVisibility(View.GONE);
+        binding.findHospital.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(getApplicationContext(),MapsActivity.class));
+            }
+        });
+        binding.signOutButton.setVisibility(View.GONE);
+        binding.signOutButton.setOnClickListener(v -> signOut());
 
         createSignInIntent();
     }
@@ -54,6 +59,7 @@ private ActivityFirebaseUiBinding binding;
                         .setLogo(R.drawable.ic_banner_virus)      // Set logo drawable
                         .setTheme(R.style.firebaseUIStyle)      // Set theme
                         .setAvailableProviders(providers)
+                        .setIsSmartLockEnabled(true)
                         .build(),
                 RC_SIGN_IN);
         // [END auth_fui_create_intent]
@@ -71,12 +77,16 @@ private ActivityFirebaseUiBinding binding;
                 // Successfully signed in
                 FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
                 binding.userName.setText(user.getDisplayName());
+                binding.userName.setVisibility(View.VISIBLE);
+                binding.findHospital.setVisibility(View.VISIBLE);
+                binding.signOutButton.setVisibility(View.VISIBLE);
                 Log.e("firebase user logged in",user.getDisplayName());
             } else {
                 // Sign in failed. If response is null the user canceled the
                 // sign-in flow using the back button. Otherwise check
                 // response.getError().getErrorCode() and handle the error.
                 // ...
+                Toast.makeText(this, response.getError().getMessage(),Toast.LENGTH_SHORT).show();
                 Log.e("firebase login failed ", "response.getError().getCause().getLocalizedMessage()");
             }
         }
@@ -89,9 +99,13 @@ private ActivityFirebaseUiBinding binding;
                 .signOut(this)
                 .addOnCompleteListener(new OnCompleteListener<Void>() {
                     public void onComplete(@NonNull Task<Void> task) {
-                        // ...
+                        Log.e("signo out","user signed out");
                     }
                 });
+        binding.userName.setVisibility(View.GONE);
+        binding.findHospital.setVisibility(View.GONE);
+        binding.signOutButton.setVisibility(View.GONE);
+        createSignInIntent();
         // [END auth_fui_signout]
     }
 

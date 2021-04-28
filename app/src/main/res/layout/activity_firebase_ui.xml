@@ -17,7 +17,7 @@
             tools:text="User name" />
 
         <Button
-            android:id="@+id/add_appointment_button"
+            android:id="@+id/find_hospital"
             style="@style/addAppointmentButtonLayout"
             app:layout_constraintBottom_toTopOf="@+id/sign_out_button"
             app:layout_constraintEnd_toEndOf="parent"
@@ -28,10 +28,13 @@
         <Button
             android:id="@+id/sign_out_button"
             style="@style/signoutButtonLayout"
+            android:layout_marginBottom="24dp"
+            android:background="@drawable/sign_out_button"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.498"
             app:layout_constraintStart_toStartOf="parent"
-            tools:text="Αποσύνδεση"/>
+            tools:text="Αποσύνδεση" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

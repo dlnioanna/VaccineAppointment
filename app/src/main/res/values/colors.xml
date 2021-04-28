@@ -11,5 +11,5 @@
     <color name="colorSecondaryVariant">#2399F6</color>
     <color name="colorPrimary">#1476C5</color>
     <color name="colorPrimaryVariant">#004D8A</color>
-    <color name="red">@android:color/holo_red_dark</color>
+    <color name="red">#FFCC0000</color>
 </resources>
