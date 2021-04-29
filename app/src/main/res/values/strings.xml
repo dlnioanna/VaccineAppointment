@@ -5,5 +5,4 @@
     <string name="login_error">Ανεπιτυχής προσπάθεια σύνδεσης. Προσπαθήστε ξάνα.</string>
     <string name="title_activity_maps">Map</string>
     <string name="maps_api_key">AIzaSyAFArfpagQFMskrFmWc8w6VWApyLZnAZi4</string>
-    <!--    <string name="default_web_client_id">122664211260-l81v23atot6vln85kp06rd8ueuvill30.apps.googleusercontent.com</string>-->
 </resources>
