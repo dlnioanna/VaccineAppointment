@@ -15,33 +15,17 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import androidx.databinding.DataBindingUtil;
-import unipi.protal.vaccineappointment.databinding.ActivityFirebaseUiBinding;
+
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 public class FirebaseUIActivity extends AppCompatActivity {
-private ActivityFirebaseUiBinding binding;
     private static final int RC_SIGN_IN = 123;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        binding = ActivityFirebaseUiBinding.inflate(getLayoutInflater());
-        View view = binding.getRoot();
-        setContentView(view);
-        binding.userName.setVisibility(View.GONE);
-        binding.findHospital.setVisibility(View.GONE);
-        binding.findHospital.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startActivity(new Intent(getApplicationContext(),MapsActivity.class));
-            }
-        });
-        binding.signOutButton.setVisibility(View.GONE);
-        binding.signOutButton.setOnClickListener(v -> signOut());
-
+        setContentView(R.layout.activity_firebase_ui);
         createSignInIntent();
     }
 
@@ -59,7 +43,7 @@ private ActivityFirebaseUiBinding binding;
                         .setLogo(R.drawable.ic_banner_virus)      // Set logo drawable
                         .setTheme(R.style.firebaseUIStyle)      // Set theme
                         .setAvailableProviders(providers)
-                        .setIsSmartLockEnabled(true)
+                        .setIsSmartLockEnabled(false)
                         .build(),
                 RC_SIGN_IN);
         // [END auth_fui_create_intent]
@@ -76,18 +60,15 @@ private ActivityFirebaseUiBinding binding;
             if (resultCode == RESULT_OK) {
                 // Successfully signed in
                 FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-                binding.userName.setText(user.getDisplayName());
-                binding.userName.setVisibility(View.VISIBLE);
-                binding.findHospital.setVisibility(View.VISIBLE);
-                binding.signOutButton.setVisibility(View.VISIBLE);
-                Log.e("firebase user logged in",user.getDisplayName());
+                Intent intent = new Intent(this,UserUI.class);
+                intent.putExtra("currentUser",user);
+                startActivity(intent);
+
             } else {
                 // Sign in failed. If response is null the user canceled the
-                // sign-in flow using the back button. Otherwise check
-                // response.getError().getErrorCode() and handle the error.
-                // ...
+                // sign-in flow using the back button. Otherwise show
+                // response.getError().getMessage().
                 Toast.makeText(this, response.getError().getMessage(),Toast.LENGTH_SHORT).show();
-                Log.e("firebase login failed ", "response.getError().getCause().getLocalizedMessage()");
             }
         }
     }
@@ -102,25 +83,9 @@ private ActivityFirebaseUiBinding binding;
                         Log.e("signo out","user signed out");
                     }
                 });
-        binding.userName.setVisibility(View.GONE);
-        binding.findHospital.setVisibility(View.GONE);
-        binding.signOutButton.setVisibility(View.GONE);
-        createSignInIntent();
         // [END auth_fui_signout]
     }
 
-    public void delete() {
-        // [START auth_fui_delete]
-        AuthUI.getInstance()
-                .delete(this)
-                .addOnCompleteListener(new OnCompleteListener<Void>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Void> task) {
-                        // ...
-                    }
-                });
-        // [END auth_fui_delete]
-    }
 
 
 }
