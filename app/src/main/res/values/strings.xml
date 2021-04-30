@@ -5,4 +5,8 @@
     <string name="login_error">Ανεπιτυχής προσπάθεια σύνδεσης. Προσπαθήστε ξάνα.</string>
     <string name="title_activity_maps">Map</string>
     <string name="maps_api_key">AIzaSyAFArfpagQFMskrFmWc8w6VWApyLZnAZi4</string>
+    <string name="login_message">Αναζητείστε το πλησιέστερο εμβολιαστικό κέντρο και κλείστε το ραντεβού σας.</string>
+    <string name="btn_map">Map</string>
+    <string name="btn_satellite">Satellite</string>
+    <string name="btn_hybrid">Hybrid</string>
 </resources>

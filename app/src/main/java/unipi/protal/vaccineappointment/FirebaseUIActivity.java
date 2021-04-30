@@ -44,7 +44,7 @@ public class FirebaseUIActivity extends AppCompatActivity implements LocationLis
     private ChildEventListener childEventListener;
     private FirebaseAuth firebaseAuth;
     private FirebaseAuth.AuthStateListener authStateListener;
-    private String mUsername;
+    private String username;
     private ActivityFirebaseUiBinding binding;
     private LocationManager manager;
 
@@ -54,7 +54,7 @@ public class FirebaseUIActivity extends AppCompatActivity implements LocationLis
         binding = ActivityFirebaseUiBinding.inflate(getLayoutInflater());
         View view = binding.getRoot();
         setContentView(view);
-        mUsername = ANONYMOUS;
+        username = ANONYMOUS;
         // Initialize Firebase components
         firebaseDatabase = FirebaseDatabase.getInstance();
         firebaseAuth = FirebaseAuth.getInstance();
@@ -80,12 +80,10 @@ public class FirebaseUIActivity extends AppCompatActivity implements LocationLis
     }
 
     public void createSignInIntent() {
-        // [START auth_fui_create_intent]
         // Choose authentication providers
         List<AuthUI.IdpConfig> providers = Arrays.asList(
                 new AuthUI.IdpConfig.EmailBuilder().build(),
                 new AuthUI.IdpConfig.GoogleBuilder().build());
-
         // Create and launch sign-in intent
         startActivityForResult(
                 AuthUI.getInstance()
@@ -96,7 +94,6 @@ public class FirebaseUIActivity extends AppCompatActivity implements LocationLis
                         .setIsSmartLockEnabled(false)   //saves users credentials to phone device
                         .build(),
                 RC_SIGN_IN);
-        // [END auth_fui_create_intent]
     }
 
     // [START auth_fui_result]
@@ -110,9 +107,6 @@ public class FirebaseUIActivity extends AppCompatActivity implements LocationLis
             if (resultCode == RESULT_OK) {
                 // Successfully signed in
                 FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-//                Intent intent = new Intent(this,UserUI.class);
-//                intent.putExtra("currentUser",user);
-//                startActivity(intent);
                 binding.userName.setText(user.getDisplayName());
             } else {
                 // Sign in failed. If response is null the user canceled the
@@ -123,9 +117,6 @@ public class FirebaseUIActivity extends AppCompatActivity implements LocationLis
             }
         }
     }
-    // [END auth_fui_result]
-
-
 
     @Override
     protected void onResume() {
@@ -139,12 +130,11 @@ public class FirebaseUIActivity extends AppCompatActivity implements LocationLis
         if (authStateListener != null) {
             firebaseAuth.removeAuthStateListener(authStateListener);
         }
-        // todo clear view
         detachDatabaseReadListener();
     }
 
-    private void onSignedInInitialize(String username) {
-        mUsername = username;
+    private void onSignedInInitialize(String name) {
+        username = name;
         attachDatabaseReadListener();
     }
 
@@ -182,8 +172,7 @@ public class FirebaseUIActivity extends AppCompatActivity implements LocationLis
     }
 
     private void onSignedOutCleanup() {
-        mUsername = ANONYMOUS;
-        // todo clear view
+        username = ANONYMOUS;
         detachDatabaseReadListener();
 
     }
@@ -199,6 +188,7 @@ public class FirebaseUIActivity extends AppCompatActivity implements LocationLis
         if(ActivityCompat.checkSelfPermission(this,ACCESS_FINE_LOCATION)!= PackageManager.PERMISSION_GRANTED){
             ActivityCompat.requestPermissions(this,new String[]{ACCESS_FINE_LOCATION},REQUEST_LOCATION);
         }else{
+            manager.requestLocationUpdates(LocationManager.GPS_PROVIDER,0,0,this);
             startActivity(new Intent(getApplicationContext(),MapsActivity.class));
         }
     }
@@ -208,6 +198,7 @@ public class FirebaseUIActivity extends AppCompatActivity implements LocationLis
         if(requestCode==REQUEST_LOCATION && grantResults[0]== PackageManager.PERMISSION_GRANTED){
             if(ActivityCompat.checkSelfPermission(this,ACCESS_FINE_LOCATION)==PackageManager.PERMISSION_GRANTED){
                 manager.requestLocationUpdates(LocationManager.GPS_PROVIDER,0,0,this);
+                startActivity(new Intent(getApplicationContext(),MapsActivity.class));
             }
         }
 

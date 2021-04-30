@@ -43,9 +43,6 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity
-            android:name="unipi.protal.vaccineappointment.UserUI"
-            android:label="@string/user_ui_label" />
     </application>
 
 </manifest>
