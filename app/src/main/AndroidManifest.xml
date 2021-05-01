@@ -21,7 +21,8 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.VaccineAppointment">
 
-        <!--
+        <!--  65:60:00:ab:49:cc:5c:92:bd:4d:5c:ea:b5:b5:e5:b3:2e:88:99:f8
+         dd:d1:5f:f4:5e:a4:b3:38:55:cb:20:92:91:ee:f5:0d:ea:f7:fe:74
              The API key for Google Maps-based APIs is defined as a string resource.
              (See the file "res/values/google_maps_api.xml").
              Note that the API key is linked to the encryption key used to sign the APK.
