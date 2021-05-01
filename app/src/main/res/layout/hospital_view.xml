@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    style="@style/hospital_view">
+
+    <TextView
+        android:id="@+id/hospital_title"
+        style="@style/hospital_title" />
+
+    <TextView
+        android:id="@+id/hospital_description"
+        style="@style/hospital_description"
+        android:text="lalalalalaaaaaaaalal lalallala" />
+</LinearLayout>

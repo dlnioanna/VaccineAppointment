@@ -1,9 +1,11 @@
 package unipi.protal.vaccineappointment;
 
 import androidx.fragment.app.FragmentActivity;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -14,13 +16,13 @@ import com.google.android.gms.maps.model.MarkerOptions;
 
 import unipi.protal.vaccineappointment.databinding.ActivityFirebaseUiBinding;
 import unipi.protal.vaccineappointment.databinding.ActivityMapsBinding;
-public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
+public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, HospitalAdapter.ListItemClickListener {
 
     private GoogleMap mMap;
-    private Long latValue, longValue;
     private ActivityMapsBinding binding;
     private boolean mapReady = false;
-
+    private HospitalAdapter hospitalAdapter;
+    private RecyclerView recyclerView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,6 +58,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     mMap.setMapType(GoogleMap.MAP_TYPE_HYBRID);
             }
         });
+         hospitalAdapter = new HospitalAdapter( 10,this);
+         binding.hospitalRecyclerView.setAdapter(hospitalAdapter);
     }
 
     /**
@@ -75,5 +79,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         LatLng sydney = new LatLng(-34, 151);
         mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
         mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
+    }
+
+    @Override
+    public void onListItemClick(int clickedItemIndex) {
+        Toast.makeText(this, "success "+clickedItemIndex, Toast.LENGTH_LONG).show();
+
     }
 }

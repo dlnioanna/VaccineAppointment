@@ -9,4 +9,5 @@
     <string name="btn_map">Map</string>
     <string name="btn_satellite">Satellite</string>
     <string name="btn_hybrid">Hybrid</string>
+    <string name="list_of_hospitals_title">Πλησιέστερα εμβολιαστικά κέντρα</string>
 </resources>

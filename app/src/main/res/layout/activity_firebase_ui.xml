@@ -12,9 +12,12 @@
             android:id="@+id/user_name"
             style="@style/userNameStyle"
             android:layout_marginTop="56dp"
+            app:layout_constraintBottom_toTopOf="@+id/login_message"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_chainStyle="spread_inside"
             tools:text="User name" />
 
         <Button
@@ -23,8 +26,9 @@
             android:layout_marginBottom="160dp"
             app:layout_constraintBottom_toTopOf="@+id/sign_out_button"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.495"
+            app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/login_message"
             tools:text="Αναζήτηση εμβολιαστικού κέντρου" />
 
         <Button
@@ -33,8 +37,9 @@
             android:layout_marginBottom="24dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.498"
+            app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/find_hospital"
             tools:text="Αποσύνδεση" />
 
         <TextView
@@ -42,6 +47,7 @@
             style="@style/loginMessageLayout"
             app:layout_constraintBottom_toTopOf="@+id/find_hospital"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/user_name" />
 

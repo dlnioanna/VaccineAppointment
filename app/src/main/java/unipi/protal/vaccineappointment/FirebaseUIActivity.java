@@ -47,6 +47,7 @@ public class FirebaseUIActivity extends AppCompatActivity implements LocationLis
     private String username;
     private ActivityFirebaseUiBinding binding;
     private LocationManager manager;
+    private FirebaseUser user;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,7 +55,7 @@ public class FirebaseUIActivity extends AppCompatActivity implements LocationLis
         binding = ActivityFirebaseUiBinding.inflate(getLayoutInflater());
         View view = binding.getRoot();
         setContentView(view);
-        username = ANONYMOUS;
+//        username = ANONYMOUS;
         // Initialize Firebase components
         firebaseDatabase = FirebaseDatabase.getInstance();
         firebaseAuth = FirebaseAuth.getInstance();
@@ -62,7 +63,7 @@ public class FirebaseUIActivity extends AppCompatActivity implements LocationLis
         authStateListener = new FirebaseAuth.AuthStateListener() {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
-                FirebaseUser user = firebaseAuth.getCurrentUser();
+                user = firebaseAuth.getCurrentUser();
                 if (user != null) {
                     // User is signed in
                     onSignedInInitialize(user.getDisplayName());
@@ -116,6 +117,17 @@ public class FirebaseUIActivity extends AppCompatActivity implements LocationLis
                 finish();
             }
         }
+    }
+    @Override
+    protected void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putParcelable("f_user",user);
+    }
+
+    @Override
+    protected void onRestoreInstanceState(@NonNull Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        user =savedInstanceState.getParcelable("f_user");
     }
 
     @Override
@@ -172,7 +184,7 @@ public class FirebaseUIActivity extends AppCompatActivity implements LocationLis
     }
 
     private void onSignedOutCleanup() {
-        username = ANONYMOUS;
+//        username = ANONYMOUS;
         detachDatabaseReadListener();
 
     }

@@ -85,18 +85,16 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/linearLayout">
 
-            <ScrollView
+            <TextView
+                android:id="@+id/hospital_list_title"
+                style="@style/hospital_list_title" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/hospital_recycler_view"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:scrollbarTrackVertical="@color/teal_200">
+                android:layout_height="match_parent"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"/>
 
-                <ImageView
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:src="@color/teal_200">
-
-                </ImageView>
-            </ScrollView>
         </LinearLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>
