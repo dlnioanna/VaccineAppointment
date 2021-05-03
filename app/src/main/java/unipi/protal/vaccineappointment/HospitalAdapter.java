@@ -20,10 +20,11 @@ public class HospitalAdapter extends RecyclerView.Adapter<HospitalAdapter.Hospit
         void onListItemClick(int clickedItemIndex);
     }
 
-    public HospitalAdapter(int items, ListItemClickListener listener) {
+    public HospitalAdapter(List<Hospital> hospitals, ListItemClickListener listener) {
         mOnClickListener = listener;
-        numOfHospitals = items;
-        viewHolderCount = 0;
+        hospitalList=hospitals;
+        numOfHospitals = hospitalList.size();
+        //viewHolderCount = 0;
     }
 
     @NonNull
@@ -53,7 +54,7 @@ public class HospitalAdapter extends RecyclerView.Adapter<HospitalAdapter.Hospit
 
     @Override
     public int getItemCount() {
-        return 10;
+        return hospitalList.size();
     }
 
 

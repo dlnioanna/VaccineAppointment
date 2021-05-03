@@ -8,6 +8,5 @@
 
     <TextView
         android:id="@+id/hospital_description"
-        style="@style/hospital_description"
-        android:text="lalalalalaaaaaaaalal lalallala" />
+        style="@style/hospital_description"/>
 </LinearLayout>

@@ -43,33 +43,25 @@
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight="1.5"
-                android:gravity="bottom"
+                android:gravity="center"
+                android:layout_margin="@dimen/small_margin"
                 android:orientation="horizontal"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/fragment_map">
 
-
                 <Button
                     android:id="@+id/btnMap"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
+                    style="@style/map_button_style"
                     android:text="@string/btn_map" />
-
                 <Button
                     android:id="@+id/btnSatellite"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
+                    style="@style/map_button_style"
                     android:text="@string/btn_satellite" />
-
                 <Button
                     android:id="@+id/btnHybrid"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
+                    style="@style/map_button_style"
                     android:text="@string/btn_hybrid" />
             </LinearLayout>
         </LinearLayout>
@@ -93,7 +85,7 @@
                 android:id="@+id/hospital_recycler_view"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"/>
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
 
         </LinearLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>

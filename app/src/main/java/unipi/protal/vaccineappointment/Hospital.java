@@ -7,18 +7,85 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 public class Hospital implements Parcelable {
+    private int id;
     private String title;
     private String description;
     private String area;
     private Double latitude;
     private Double longitute;
 
-    public Hospital(String title, String description, String area, Double latitude, Double longitute) {
+    public Hospital() {
+    }
+
+    public Hospital(int id, String title, String description, String area, Double latitude, Double longitute) {
+        this.id = id;
         this.title = title;
         this.description = description;
         this.area = area;
         this.latitude = latitude;
         this.longitute = longitute;
+    }
+
+    protected Hospital(Parcel in) {
+        id = in.readInt();
+        title = in.readString();
+        description = in.readString();
+        area = in.readString();
+        if (in.readByte() == 0) {
+            latitude = null;
+        } else {
+            latitude = in.readDouble();
+        }
+        if (in.readByte() == 0) {
+            longitute = null;
+        } else {
+            longitute = in.readDouble();
+        }
+    }
+
+    public static final Creator<Hospital> CREATOR = new Creator<Hospital>() {
+        @Override
+        public Hospital createFromParcel(Parcel in) {
+            return new Hospital(in);
+        }
+
+        @Override
+        public Hospital[] newArray(int size) {
+            return new Hospital[size];
+        }
+    };
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeInt(id);
+        dest.writeString(title);
+        dest.writeString(description);
+        dest.writeString(area);
+        if (latitude == null) {
+            dest.writeByte((byte) 0);
+        } else {
+            dest.writeByte((byte) 1);
+            dest.writeDouble(latitude);
+        }
+        if (longitute == null) {
+            dest.writeByte((byte) 0);
+        } else {
+            dest.writeByte((byte) 1);
+            dest.writeDouble(longitute);
+        }
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public String getTitle() {
@@ -61,55 +128,5 @@ public class Hospital implements Parcelable {
         this.longitute = longitute;
     }
 
-    protected Hospital(Parcel in) {
-        title = in.readString();
-        description = in.readString();
-        area = in.readString();
-        if (in.readByte() == 0) {
-            latitude = null;
-        } else {
-            latitude = in.readDouble();
-        }
-        if (in.readByte() == 0) {
-            longitute = null;
-        } else {
-            longitute = in.readDouble();
-        }
-    }
 
-    public static final Creator<Hospital> CREATOR = new Creator<Hospital>() {
-        @Override
-        public Hospital createFromParcel(Parcel in) {
-            return new Hospital(in);
-        }
-
-        @Override
-        public Hospital[] newArray(int size) {
-            return new Hospital[size];
-        }
-    };
-
-    @Override
-    public int describeContents() {
-        return 0;
-    }
-
-    @Override
-    public void writeToParcel(Parcel dest, int flags) {
-        dest.writeString(title);
-        dest.writeString(description);
-        dest.writeString(area);
-        if (latitude == null) {
-            dest.writeByte((byte) 0);
-        } else {
-            dest.writeByte((byte) 1);
-            dest.writeDouble(latitude);
-        }
-        if (longitute == null) {
-            dest.writeByte((byte) 0);
-        } else {
-            dest.writeByte((byte) 1);
-            dest.writeDouble(longitute);
-        }
-    }
 }

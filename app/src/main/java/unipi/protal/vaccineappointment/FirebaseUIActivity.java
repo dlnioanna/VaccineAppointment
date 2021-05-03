@@ -1,6 +1,7 @@
 package unipi.protal.vaccineappointment;
 
 import android.content.Intent;
+import android.content.IntentSender;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationListener;
@@ -18,6 +19,13 @@ import unipi.protal.vaccineappointment.databinding.ActivityFirebaseUiBinding;
 
 import com.firebase.ui.auth.AuthUI;
 import com.firebase.ui.auth.IdpResponse;
+import com.google.android.gms.common.api.ApiException;
+import com.google.android.gms.common.api.ResolvableApiException;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.location.LocationSettingsRequest;
+import com.google.android.gms.location.LocationSettingsResponse;
+import com.google.android.gms.location.LocationSettingsStatusCodes;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
@@ -33,15 +41,12 @@ import java.util.List;
 
 import static android.Manifest.permission.ACCESS_FINE_LOCATION;
 
-public class FirebaseUIActivity extends AppCompatActivity implements LocationListener {
+public class FirebaseUIActivity extends AppCompatActivity  {
     private static final int RC_SIGN_IN = 123;
-    private static final int REQUEST_LOCATION= 1000;
+    public static final int REQUEST_LOCATION= 1000;
     public static final String ANONYMOUS = "anonymous";
     private static final String TAG = "MainActivity";
     // Firebase instance variables
-    private FirebaseDatabase firebaseDatabase;
-    private DatabaseReference databaseReference;
-    private ChildEventListener childEventListener;
     private FirebaseAuth firebaseAuth;
     private FirebaseAuth.AuthStateListener authStateListener;
     private String username;
@@ -57,9 +62,7 @@ public class FirebaseUIActivity extends AppCompatActivity implements LocationLis
         setContentView(view);
 //        username = ANONYMOUS;
         // Initialize Firebase components
-        firebaseDatabase = FirebaseDatabase.getInstance();
         firebaseAuth = FirebaseAuth.getInstance();
-        databaseReference = firebaseDatabase.getReference().child("vaccine_point");
         authStateListener = new FirebaseAuth.AuthStateListener() {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
@@ -74,7 +77,7 @@ public class FirebaseUIActivity extends AppCompatActivity implements LocationLis
                 }
             }
         };
-        manager = (LocationManager) getSystemService(LOCATION_SERVICE);
+      //  manager = (LocationManager) getSystemService(LOCATION_SERVICE);
         binding.signOutButton.setOnClickListener(v->signOut());
         binding.findHospital.setOnClickListener(v->gps(v));
         createSignInIntent();
@@ -142,37 +145,12 @@ public class FirebaseUIActivity extends AppCompatActivity implements LocationLis
         if (authStateListener != null) {
             firebaseAuth.removeAuthStateListener(authStateListener);
         }
-        detachDatabaseReadListener();
     }
 
     private void onSignedInInitialize(String name) {
         username = name;
-        attachDatabaseReadListener();
     }
 
-    private void attachDatabaseReadListener() {
-        if (childEventListener == null) {
-            childEventListener = new ChildEventListener() {
-                @Override
-                public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                    //todo otan prostheto astheni h allh efarmogh na ananeonetai
-                }
-
-                public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-                }
-
-                public void onChildRemoved(DataSnapshot dataSnapshot) {
-                }
-
-                public void onChildMoved(DataSnapshot dataSnapshot, String s) {
-                }
-
-                public void onCancelled(DatabaseError databaseError) {
-                }
-            };
-            databaseReference.addChildEventListener(childEventListener);
-        }
-    }
     public void signOut() {
         AuthUI.getInstance()
                 .signOut(this)
@@ -185,22 +163,22 @@ public class FirebaseUIActivity extends AppCompatActivity implements LocationLis
 
     private void onSignedOutCleanup() {
 //        username = ANONYMOUS;
-        detachDatabaseReadListener();
+     //   detachDatabaseReadListener();
 
     }
 
-    private void detachDatabaseReadListener() {
-        if (childEventListener != null) {
-            databaseReference.removeEventListener(childEventListener);
-            childEventListener = null;
-        }
-    }
+//    private void detachDatabaseReadListener() {
+//        if (childEventListener != null) {
+//            databaseReference.removeEventListener(childEventListener);
+//            childEventListener = null;
+//        }
+//    }
 
     private void gps(View view){
         if(ActivityCompat.checkSelfPermission(this,ACCESS_FINE_LOCATION)!= PackageManager.PERMISSION_GRANTED){
             ActivityCompat.requestPermissions(this,new String[]{ACCESS_FINE_LOCATION},REQUEST_LOCATION);
         }else{
-            manager.requestLocationUpdates(LocationManager.GPS_PROVIDER,0,0,this);
+           // manager.requestLocationUpdates(LocationManager.GPS_PROVIDER,0,0,this);
             startActivity(new Intent(getApplicationContext(),MapsActivity.class));
         }
     }
@@ -209,25 +187,10 @@ public class FirebaseUIActivity extends AppCompatActivity implements LocationLis
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if(requestCode==REQUEST_LOCATION && grantResults[0]== PackageManager.PERMISSION_GRANTED){
             if(ActivityCompat.checkSelfPermission(this,ACCESS_FINE_LOCATION)==PackageManager.PERMISSION_GRANTED){
-                manager.requestLocationUpdates(LocationManager.GPS_PROVIDER,0,0,this);
+             //   manager.requestLocationUpdates(LocationManager.GPS_PROVIDER,0,0,this);
                 startActivity(new Intent(getApplicationContext(),MapsActivity.class));
             }
         }
-
-    }
-
-    @Override
-    public void onLocationChanged(@NonNull Location location) {
-
-    }
-
-    @Override
-    public void onProviderEnabled(@NonNull String provider) {
-
-    }
-
-    @Override
-    public void onProviderDisabled(@NonNull String provider) {
 
     }
 
