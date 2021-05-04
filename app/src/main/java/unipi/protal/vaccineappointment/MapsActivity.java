@@ -13,6 +13,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
+
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -26,6 +27,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -50,6 +52,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private LatLng position;
     private Marker marker;
     private ArrayList<Hospital> hospitalList;
+    private List<Hospital> hospitalsByDistance ;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,6 +76,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             public void onDataChange(DataSnapshot dataSnapshot) {
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                     Hospital hospital = snapshot.getValue(Hospital.class);
+                    Location hospitalLocation = new Location(hospital.getTitle());
+                    hospitalLocation.setLatitude(hospital.getLatitude());
+                    hospitalLocation.setLongitude(hospital.getLongitute());
+                    Float distance = hospitalLocation.distanceTo(currentLocation);
+                    hospital.setDistance(distance);
                     hospitalList.add(hospital);
                 }
                 binding.firebaseProgressBar.setVisibility(View.GONE);
@@ -112,21 +120,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     mMap.setMapType(GoogleMap.MAP_TYPE_HYBRID);
             }
         });
-
     }
 
     private void createAdapter() {
-        for (Hospital h :hospitalList){
-          Location hospitalLocation = new Location(h.getTitle());
-          h.setLatitude(h.getLatitude());
-          h.setLongitute(h.getLongitute());
-          Float distance = hospitalLocation.distanceTo(currentLocation);
-          h.setDistance(distance);
-          Log.e("hospital distance ",h.getTitle()+" "+h.getDistance());
-        }
-
-        List<Hospital> hospitalsByDistance =
-                hospitalList.stream()
+       hospitalsByDistance = hospitalList.stream()
                         .sorted(Comparator.comparing(Hospital::getDistance))
                         .collect(Collectors.toList());
         hospitalAdapter = new HospitalAdapter(hospitalsByDistance, this);
@@ -159,9 +156,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     @Override
     public void onListItemClick(int clickedItemIndex) {
-        Toast.makeText(this, "Νοσοκομείο " + hospitalList.get(clickedItemIndex).getTitle()
-                +" "+hospitalList.get(clickedItemIndex).getDistance(), Toast.LENGTH_LONG).show();
-        Intent i = new Intent(this,Appointment.class);
+        Intent i = new Intent(this, Appointment.class);
+        i.putExtra("hospital",hospitalsByDistance.get(clickedItemIndex));
         startActivity(i);
 
     }

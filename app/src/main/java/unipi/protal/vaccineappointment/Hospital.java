@@ -7,7 +7,6 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 public class Hospital implements Parcelable {
-    private int id;
     private String title;
     private String description;
     private String area;
@@ -18,8 +17,7 @@ public class Hospital implements Parcelable {
     public Hospital() {
     }
 
-    public Hospital(int id, String title, String description, String area, Double latitude, Double longitute) {
-        this.id = id;
+    public Hospital(String title, String description, String area, Double latitude, Double longitute) {
         this.title = title;
         this.description = description;
         this.area = area;
@@ -28,7 +26,6 @@ public class Hospital implements Parcelable {
     }
 
     protected Hospital(Parcel in) {
-        id = in.readInt();
         title = in.readString();
         description = in.readString();
         area = in.readString();
@@ -63,7 +60,6 @@ public class Hospital implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeInt(id);
         dest.writeString(title);
         dest.writeString(description);
         dest.writeString(area);
@@ -79,14 +75,6 @@ public class Hospital implements Parcelable {
             dest.writeByte((byte) 1);
             dest.writeDouble(longitute);
         }
-    }
-
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
     }
 
     public String getTitle() {
