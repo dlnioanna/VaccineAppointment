@@ -10,26 +10,59 @@
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:layout_margin="@dimen/medium_margin"
             android:layout_marginBottom="@dimen/extra_large_margin"
             tools:context=".Appointment">
 
-            <CalendarView
-                android:id="@+id/calendarView"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/small_margin"
+            <LinearLayout
+                android:id="@+id/date_layout"
+                style="@style/appointment_linear_layout"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toTopOf="parent">
 
+                <TextView
+                    style="@style/appointment_text_view"
+                    android:text="@string/select_date_text" />
+
+                <ImageView
+                    android:id="@+id/date_picker_image"
+                    style="@style/date_picker_style"
+                    app:srcCompat="@drawable/ic_calendar" />
+                <TextView
+                    android:id="@+id/selected_date"
+                    style="@style/appointment_text_view"
+                   tools:text="@string/select_date_text"/>
+
+            </LinearLayout>
+            <LinearLayout
+                android:id="@+id/time_layout"
+                style="@style/appointment_linear_layout"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/date_layout">
+
+                <TextView
+                    style="@style/appointment_text_view"
+                    android:text="@string/select_time_text" />
+
+                <ImageView
+                    android:id="@+id/time_picker_image"
+                    style="@style/date_picker_style"
+                    app:srcCompat="@drawable/ic_clock" />
+                <TextView
+                    android:id="@+id/selected_time"
+                    style="@style/appointment_text_view"
+                    tools:text="@string/select_date_text"/>
+
+            </LinearLayout>
             <LinearLayout
                 android:id="@+id/name_layout"
                 style="@style/appointment_linear_layout"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/calendarView">
+                app:layout_constraintTop_toBottomOf="@+id/time_layout">
 
                 <TextView
                     style="@style/appointment_text_view"
@@ -81,6 +114,7 @@
             <TextView
                 android:id="@+id/first_dose"
                 style="@style/appointment_dose"
+                android:visibility="invisible"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/telephone_layout" />
@@ -88,6 +122,7 @@
             <TextView
                 android:id="@+id/second_dose"
                 style="@style/appointment_dose"
+                android:visibility="invisible"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/first_dose" />
@@ -97,8 +132,10 @@
                 style="@style/confirm_appointment_button"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.533"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/second_dose" />
+                app:layout_constraintTop_toBottomOf="@+id/second_dose"
+                app:layout_constraintVertical_bias="1.0" />
 
 
         </androidx.constraintlayout.widget.ConstraintLayout>

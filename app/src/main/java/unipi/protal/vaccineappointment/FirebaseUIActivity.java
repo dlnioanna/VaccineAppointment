@@ -1,5 +1,6 @@
 package unipi.protal.vaccineappointment;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentSender;
 import android.content.pm.PackageManager;
@@ -7,11 +8,13 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 
@@ -41,9 +44,10 @@ import java.util.List;
 
 import static android.Manifest.permission.ACCESS_FINE_LOCATION;
 
-public class FirebaseUIActivity extends AppCompatActivity  {
+public class FirebaseUIActivity extends AppCompatActivity implements LocationListener {
     private static final int RC_SIGN_IN = 123;
-    public static final int REQUEST_LOCATION= 1000;
+    public static final int REQUEST_LOCATION = 1000;
+    public static final int GPS_ENABLE_REQUEST = 2000;
     public static final String ANONYMOUS = "anonymous";
     private static final String TAG = "MainActivity";
     // Firebase instance variables
@@ -60,7 +64,7 @@ public class FirebaseUIActivity extends AppCompatActivity  {
         binding = ActivityFirebaseUiBinding.inflate(getLayoutInflater());
         View view = binding.getRoot();
         setContentView(view);
-//        username = ANONYMOUS;
+        manager = (LocationManager) getSystemService(LOCATION_SERVICE);
         // Initialize Firebase components
         firebaseAuth = FirebaseAuth.getInstance();
         authStateListener = new FirebaseAuth.AuthStateListener() {
@@ -77,9 +81,9 @@ public class FirebaseUIActivity extends AppCompatActivity  {
                 }
             }
         };
-      //  manager = (LocationManager) getSystemService(LOCATION_SERVICE);
-        binding.signOutButton.setOnClickListener(v->signOut());
-        binding.findHospital.setOnClickListener(v->gps(v));
+        //  manager = (LocationManager) getSystemService(LOCATION_SERVICE);
+        binding.signOutButton.setOnClickListener(v -> signOut());
+        binding.findHospital.setOnClickListener(v -> gps(v));
         createSignInIntent();
     }
 
@@ -104,10 +108,8 @@ public class FirebaseUIActivity extends AppCompatActivity  {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-
         if (requestCode == RC_SIGN_IN) {
             IdpResponse response = IdpResponse.fromResultIntent(data);
-
             if (resultCode == RESULT_OK) {
                 // Successfully signed in
                 FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
@@ -121,16 +123,17 @@ public class FirebaseUIActivity extends AppCompatActivity  {
             }
         }
     }
+
     @Override
     protected void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putParcelable("f_user",user);
+        outState.putParcelable("f_user", user);
     }
 
     @Override
     protected void onRestoreInstanceState(@NonNull Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
-        user =savedInstanceState.getParcelable("f_user");
+        user = savedInstanceState.getParcelable("f_user");
     }
 
     @Override
@@ -163,35 +166,78 @@ public class FirebaseUIActivity extends AppCompatActivity  {
 
     private void onSignedOutCleanup() {
 //        username = ANONYMOUS;
-     //   detachDatabaseReadListener();
+        //   detachDatabaseReadListener();
 
     }
 
-//    private void detachDatabaseReadListener() {
-//        if (childEventListener != null) {
-//            databaseReference.removeEventListener(childEventListener);
-//            childEventListener = null;
-//        }
-//    }
-
-    private void gps(View view){
-        if(ActivityCompat.checkSelfPermission(this,ACCESS_FINE_LOCATION)!= PackageManager.PERMISSION_GRANTED){
-            ActivityCompat.requestPermissions(this,new String[]{ACCESS_FINE_LOCATION},REQUEST_LOCATION);
-        }else{
-           // manager.requestLocationUpdates(LocationManager.GPS_PROVIDER,0,0,this);
-            startActivity(new Intent(getApplicationContext(),MapsActivity.class));
+    private void gps(View view) {
+        if (!manager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+            showGPSDiabledDialog();
+        } else {
+            if (ActivityCompat.checkSelfPermission(this, ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(this, new String[]{ACCESS_FINE_LOCATION}, REQUEST_LOCATION);
+            } else {
+                manager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this);
+                startActivity(new Intent(getApplicationContext(), MapsActivity.class));
+            }
         }
     }
+
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if(requestCode==REQUEST_LOCATION && grantResults[0]== PackageManager.PERMISSION_GRANTED){
-            if(ActivityCompat.checkSelfPermission(this,ACCESS_FINE_LOCATION)==PackageManager.PERMISSION_GRANTED){
-             //   manager.requestLocationUpdates(LocationManager.GPS_PROVIDER,0,0,this);
-                startActivity(new Intent(getApplicationContext(),MapsActivity.class));
+        if (requestCode == REQUEST_LOCATION && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+            if (ActivityCompat.checkSelfPermission(this, ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+                manager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this);
+                startActivity(new Intent(getApplicationContext(), MapsActivity.class));
             }
         }
 
     }
 
+    @Override
+    public void onLocationChanged(@NonNull Location location) {
+
+    }
+
+    @Override
+    public void onProviderEnabled(@NonNull String provider) {
+
+    }
+
+    @Override
+    public void onProviderDisabled(@NonNull String provider) {
+//        int off = 0;
+//        try {
+//            off = Settings.Secure.getInt(getContentResolver(), Settings.Secure.LOCATION_MODE);
+//        } catch (Settings.SettingNotFoundException e) {
+//            e.printStackTrace();
+//        }
+//        if(off==0){
+//            Intent onGPS = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+//            startActivity(onGPS);
+//        }else {
+//
+//        }
+    }
+
+    public void showGPSDiabledDialog() {
+        AlertDialog.Builder alertDialog = new AlertDialog.Builder(this);
+        alertDialog.setTitle(getString(R.string.gps_title));
+        alertDialog.setMessage(getString(R.string.gps_message));
+        alertDialog.setPositiveButton(getString(R.string.gps_yes), new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                Intent onGPS = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+                startActivity(onGPS);
+            }
+        }).setNegativeButton(getString(R.string.gps_no), new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                onBackPressed();
+            }
+        });
+        alertDialog.create();
+        alertDialog.show();
+    }
 }

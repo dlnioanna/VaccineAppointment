@@ -1,15 +1,18 @@
 package unipi.protal.vaccineappointment;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.FragmentActivity;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
@@ -52,7 +55,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private LatLng position;
     private Marker marker;
     private ArrayList<Hospital> hospitalList;
-    private List<Hospital> hospitalsByDistance ;
+    private List<Hospital> hospitalsByDistance;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,6 +63,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         binding = ActivityMapsBinding.inflate(getLayoutInflater());
         View view = binding.getRoot();
         setContentView(view);
+        /*
+        default lat long to Syntagma square
+         */
         position = new LatLng(37.9750952, 23.7328519);
         manager = (LocationManager) getSystemService(LOCATION_SERVICE);
         if (ActivityCompat.checkSelfPermission(this, ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
@@ -76,15 +82,14 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             public void onDataChange(DataSnapshot dataSnapshot) {
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                     Hospital hospital = snapshot.getValue(Hospital.class);
-                    Location hospitalLocation = new Location(hospital.getTitle());
-                    hospitalLocation.setLatitude(hospital.getLatitude());
-                    hospitalLocation.setLongitude(hospital.getLongitute());
-                    Float distance = hospitalLocation.distanceTo(currentLocation);
-                    hospital.setDistance(distance);
                     hospitalList.add(hospital);
                 }
-                binding.firebaseProgressBar.setVisibility(View.GONE);
-                createAdapter();
+                if (currentLocation != null) {
+                    calculateDistance(currentLocation);
+                    binding.firebaseProgressBar.setVisibility(View.GONE);
+                    createAdapter();
+                }
+
             }
 
             @Override
@@ -123,11 +128,22 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
     private void createAdapter() {
-       hospitalsByDistance = hospitalList.stream()
-                        .sorted(Comparator.comparing(Hospital::getDistance))
-                        .collect(Collectors.toList());
+        hospitalsByDistance = hospitalList.stream()
+                .sorted(Comparator.comparing(Hospital::getDistance))
+                .collect(Collectors.toList());
         hospitalAdapter = new HospitalAdapter(hospitalsByDistance, this);
         binding.hospitalRecyclerView.setAdapter(hospitalAdapter);
+    }
+
+    private void calculateDistance(Location location) {
+        for (Hospital hospital : hospitalList) {
+            Location hospitalLocation = new Location(hospital.getTitle());
+            hospitalLocation.setLatitude(hospital.getLatitude());
+            hospitalLocation.setLongitude(hospital.getLongitute());
+            Float distance = hospitalLocation.distanceTo(location);
+            hospital.setDistance(distance);
+        }
+
     }
 
     /**
@@ -157,7 +173,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     @Override
     public void onListItemClick(int clickedItemIndex) {
         Intent i = new Intent(this, Appointment.class);
-        i.putExtra("hospital",hospitalsByDistance.get(clickedItemIndex));
+        i.putExtra("hospital", hospitalsByDistance.get(clickedItemIndex));
         startActivity(i);
 
     }
@@ -170,6 +186,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         marker = mMap.addMarker(new MarkerOptions().position(position));
         CameraPosition target = CameraPosition.builder().target(position).zoom(14).build();
         mMap.moveCamera(CameraUpdateFactory.newCameraPosition(target));
+        calculateDistance(currentLocation);
+        binding.firebaseProgressBar.setVisibility(View.GONE);
+        createAdapter();
     }
 
 
@@ -182,7 +201,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
             }
         }
-
     }
 
     @Override
@@ -192,7 +210,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     @Override
     public void onProviderDisabled(@NonNull String provider) {
-        manager.removeUpdates(this);
+
     }
+
 
 }
