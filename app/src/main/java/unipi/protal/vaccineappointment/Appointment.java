@@ -39,18 +39,19 @@ public class Appointment extends AppCompatActivity {
                 int mYear = mcurrentDate.get(Calendar.YEAR);
                 int mMonth = mcurrentDate.get(Calendar.MONTH);
                 int mDay = mcurrentDate.get(Calendar.DAY_OF_MONTH);
-
-                final DatePickerDialog mDatePicker = new DatePickerDialog(view.getContext(), new DatePickerDialog.OnDateSetListener() {
-                    public void onDateSet(DatePicker datepicker, int selectedyear, int selectedmonth, int selectedday) {
-                        dateDoseOne=String.format("%02d-%02d-%04d", selectedday ,selectedmonth , selectedyear);
+                    final DatePickerDialog mDatePicker = new DatePickerDialog(view.getContext(), new DatePickerDialog.OnDateSetListener() {
+                        public void onDateSet(DatePicker datepicker, int selectedyear, int selectedmonth, int selectedday) {
+                            Calendar c = Calendar.getInstance();
+                            c.set(selectedyear, selectedmonth - 1, selectedday, 0, 0);
+                            dateDoseOne=String.format("%02d-%02d-%04d", selectedday ,selectedmonth , selectedyear);
                         binding.selectedDate.setText(String.format("%02d-%02d-%04d", selectedday ,selectedmonth , selectedyear));
                         if(timeDoseOne!=null){
                             binding.firstDose.setText(getString(R.string.first_dose)+dateDoseOne+" και ώρα "+timeDoseOne);
                             binding.firstDose.setVisibility(View.VISIBLE);
                         }
-                        mcurrentDate.add(Calendar.DAY_OF_MONTH, DAYS_BETWEEN_DOSES);
-                        dateDoseTwo=String.format("%02d-%02d-%04d", mcurrentDate.get(Calendar.DAY_OF_MONTH) ,mcurrentDate.get(Calendar.MONTH)
-                                , mcurrentDate.get(Calendar.YEAR));
+                        c.add(Calendar.DAY_OF_MONTH, DAYS_BETWEEN_DOSES);
+                        dateDoseTwo=String.format("%02d-%02d-%04d", c.get(Calendar.DAY_OF_MONTH) ,c.get(Calendar.MONTH)
+                                , c.get(Calendar.YEAR));
                         if(timeDoseOne!=null){
                             binding.secondDose.setText(getString(R.string.second_dose)+dateDoseTwo+" και ώρα "+timeDoseOne);
                             binding.secondDose.setVisibility(View.VISIBLE);
