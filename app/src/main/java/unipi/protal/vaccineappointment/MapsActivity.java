@@ -3,7 +3,6 @@ package unipi.protal.vaccineappointment;
 import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.FragmentActivity;
-import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -14,40 +13,25 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
-
-import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
-import com.google.gson.Gson;
-import com.google.gson.JsonSyntaxException;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
-import java.util.Map;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
-import javax.security.auth.login.LoginException;
-
-import unipi.protal.vaccineappointment.databinding.ActivityFirebaseUiBinding;
 import unipi.protal.vaccineappointment.databinding.ActivityMapsBinding;
 
 import static android.Manifest.permission.ACCESS_FINE_LOCATION;
@@ -83,7 +67,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         }
         firebaseDatabase = FirebaseDatabase.getInstance();
         databaseReference = firebaseDatabase.getReference().child("vaccine_points");
-        Log.e("database reference is ", databaseReference.toString());
         hospitalList = new ArrayList<>();
         databaseReference.addValueEventListener(new ValueEventListener() {
             @Override
@@ -91,9 +74,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                     Hospital hospital = snapshot.getValue(Hospital.class);
                     hospitalList.add(hospital);
-                    Log.e("child of db", "onDataChange: " + snapshot.getValue());
-                    Log.e("hospital list size", "onDataChange: " + hospitalList.size());
                 }
+                binding.firebaseProgressBar.setVisibility(View.GONE);
                 createAdapter();
             }
 
@@ -134,7 +116,20 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
     private void createAdapter() {
-        hospitalAdapter = new HospitalAdapter(hospitalList, this);
+        for (Hospital h :hospitalList){
+          Location hospitalLocation = new Location(h.getTitle());
+          h.setLatitude(h.getLatitude());
+          h.setLongitute(h.getLongitute());
+          Float distance = hospitalLocation.distanceTo(currentLocation);
+          h.setDistance(distance);
+          Log.e("hospital distance ",h.getTitle()+" "+h.getDistance());
+        }
+
+        List<Hospital> hospitalsByDistance =
+                hospitalList.stream()
+                        .sorted(Comparator.comparing(Hospital::getDistance))
+                        .collect(Collectors.toList());
+        hospitalAdapter = new HospitalAdapter(hospitalsByDistance, this);
         binding.hospitalRecyclerView.setAdapter(hospitalAdapter);
     }
 
@@ -164,7 +159,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     @Override
     public void onListItemClick(int clickedItemIndex) {
-        Toast.makeText(this, "success " + clickedItemIndex, Toast.LENGTH_LONG).show();
+        Toast.makeText(this, "Νοσοκομείο " + hospitalList.get(clickedItemIndex).getTitle()
+                +" "+hospitalList.get(clickedItemIndex).getDistance(), Toast.LENGTH_LONG).show();
+        Intent i = new Intent(this,Appointment.class);
+        startActivity(i);
 
     }
 
@@ -176,9 +174,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         marker = mMap.addMarker(new MarkerOptions().position(position));
         CameraPosition target = CameraPosition.builder().target(position).zoom(14).build();
         mMap.moveCamera(CameraUpdateFactory.newCameraPosition(target));
-        Log.e("on location changed ", "IN ON LOCATION CHANGE, lat=" + currentLocation.getLatitude() + ", lon=" + currentLocation.getLongitude());
-
     }
+
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {

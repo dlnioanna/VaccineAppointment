@@ -14,7 +14,7 @@ public class HospitalAdapter extends RecyclerView.Adapter<HospitalAdapter.Hospit
     private List<Hospital> hospitalList;
     final private ListItemClickListener mOnClickListener;
     private int numOfHospitals;
-    private static int viewHolderCount;
+   // private static int viewHolderCount;
 
     public interface ListItemClickListener {
         void onListItemClick(int clickedItemIndex);
@@ -33,22 +33,13 @@ public class HospitalAdapter extends RecyclerView.Adapter<HospitalAdapter.Hospit
         LayoutInflater inflater = LayoutInflater.from(parent.getContext());
         View view = inflater.inflate(R.layout.hospital_view, parent, false);
         HospitalViewHolder viewHolder = new HospitalViewHolder(view);
-
-        viewHolder.viewHolderIndex.setText("ViewHolder index: " + viewHolderCount);
-
-//        int backgroundColorForViewHolder = ColorUtils
-//                .getViewHolderBackgroundColorFromInstance(context, viewHolderCount);
-//        viewHolder.itemView.setBackgroundColor(backgroundColorForViewHolder);
-
-//        Log.d(TAG, "onCreateViewHolder: number of ViewHolders created: "
-//                + viewHolderCount);
-        viewHolderCount++;
         return viewHolder;
     }
 
     @Override
     public void onBindViewHolder(@NonNull HospitalAdapter.HospitalViewHolder holder, int position) {
-        holder.viewHolderIndex.setText(String.valueOf(position));
+        holder.hospitalTitle.setText(hospitalList.get(position).getTitle());
+        holder.hospitalDescription.setText(hospitalList.get(position).getDescription());
 
     }
 
@@ -60,25 +51,15 @@ public class HospitalAdapter extends RecyclerView.Adapter<HospitalAdapter.Hospit
 
     class HospitalViewHolder extends RecyclerView.ViewHolder
             implements View.OnClickListener {
-        TextView viewHolderIndex;
+        TextView hospitalTitle, hospitalDescription;
 
         public HospitalViewHolder(View itemView) {
             super(itemView);
-            viewHolderIndex = (TextView) itemView.findViewById(R.id.hospital_title);
+            hospitalTitle = (TextView) itemView.findViewById(R.id.hospital_title);
+            hospitalDescription = (TextView) itemView.findViewById(R.id.hospital_description);
             itemView.setOnClickListener(this);
         }
 
-//        /**
-//         * A method we wrote for convenience. This method will take an integer as input and
-//         * use that integer to display the appropriate text within a list item.
-//         * @param listIndex Position of the item in the list
-//         */
-//        void bind(int listIndex) {
-//            listItemNumberView.setText(String.valueOf(listIndex));
-//        }
-
-
-        // COMPLETED (6) Override onClick, passing the clicked item's position (getAdapterPosition()) to mOnClickListener via its onListItemClick method
 
         /**
          * Called whenever a user clicks on an item in the list.

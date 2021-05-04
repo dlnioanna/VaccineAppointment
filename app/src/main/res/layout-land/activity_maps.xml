@@ -86,7 +86,16 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"/>
-
         </LinearLayout>
+
+        <ProgressBar
+            android:id="@+id/firebase_progress_bar"
+            style="?android:attr/progressBarStyle"
+            android:layout_width="@dimen/progress_bar_size"
+            android:layout_height="@dimen/progress_bar_size"
+            app:layout_constraintBottom_toBottomOf="@+id/vaccine_points_view"
+            app:layout_constraintEnd_toEndOf="@+id/vaccine_points_view"
+            app:layout_constraintStart_toEndOf="@+id/linearLayout"
+            app:layout_constraintTop_toTopOf="@+id/vaccine_points_view" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

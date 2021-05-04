@@ -13,6 +13,7 @@ public class Hospital implements Parcelable {
     private String area;
     private Double latitude;
     private Double longitute;
+    private Float distance;
 
     public Hospital() {
     }
@@ -126,6 +127,14 @@ public class Hospital implements Parcelable {
 
     public void setLongitute(Double longitute) {
         this.longitute = longitute;
+    }
+
+    public Float getDistance() {
+        return distance;
+    }
+
+    public void setDistance(Float distance) {
+        this.distance = distance;
     }
 
 

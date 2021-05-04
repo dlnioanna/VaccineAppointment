@@ -35,7 +35,7 @@
         <item name="android:textAllCaps">false</item>
         <item name="android:textColor">@color/white</item>
         <item name="android:text">@string/search_hospital</item>
-        <item name="android:background">@drawable/rectangle_button</item>
+        <item name="android:background">@drawable/map_buttons</item>
     </style>
 
     <style name="signoutButtonLayout" parent="Base.Widget.AppCompat.Button">
@@ -46,7 +46,7 @@
         <item name="android:textAllCaps">false</item>
         <item name="android:textColor">@color/white</item>
         <item name="android:text">@string/sign_out_text</item>
-        <item name="android:background">@drawable/rectangle_button</item>
+        <item name="android:background">@drawable/sign_out_button</item>
     </style>
 
     <style name="loginMessageLayout">
@@ -65,9 +65,10 @@
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:text">@string/list_of_hospitals_title</item>
-        <item name="android:layout_gravity">center</item>
-        <item name="android:textColor">@color/black</item>
+        <item name="android:gravity">center</item>
+        <item name="android:textColor">@color/colorPrimaryDark</item>
         <item name="android:textSize">@dimen/hospital_list_title_size</item>
+        <item name="android:textStyle">bold</item>
         <item name="android:textAlignment">center</item>
         <item name="android:layout_margin">@dimen/medium_margin</item>
     </style>
@@ -75,7 +76,7 @@
     <style name="hospital_title">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
-        <item name="android:layout_gravity">center</item>
+        <item name="android:gravity">center</item>
         <item name="android:textColor">#5E5858</item>
         <item name="android:textStyle">bold</item>
         <item name="android:textSize">@dimen/hospital_title_size</item>
@@ -86,6 +87,7 @@
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_gravity">center</item>
         <item name="android:textColor">#838080</item>
+        <item name="android:justificationMode">inter_word</item>
         <item name="android:textSize">@dimen/hospital_description_size</item>
     </style>
 
@@ -93,7 +95,7 @@
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:orientation">vertical</item>
-        <item name="android:layout_marginBottom">@dimen/small_margin</item>
+        <item name="android:layout_marginBottom">@dimen/medium_margin</item>
         <item name="android:layout_marginTop">@dimen/small_margin</item>
         <item name="android:layout_marginLeft">@dimen/medium_margin</item>
         <item name="android:layout_marginRight">@dimen/medium_margin</item>
@@ -104,6 +106,46 @@
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_weight">1</item>
         <item name="android:layout_margin">@dimen/small_margin</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="android:background">@drawable/map_buttons</item>
+    </style>
+    <style name="appointment_linear_layout">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_margin">@dimen/medium_margin</item>
+        <item name="android:orientation">horizontal</item>
+    </style>
+    <style name="appointment_text_view">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:layout_margin">@dimen/small_margin</item>
+        <item name="android:textColor">@color/dark_grey</item>
+    </style>
+    <style name="appointment_edit_text">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_weight">3</item>
+        <item name="android:layout_margin">@dimen/small_margin</item>
+        <item name="android:textColor">@color/grey</item>
+    </style>
+    <style name="appointment_dose">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_margin">@dimen/medium_margin</item>
+        <item name="android:textColor">@color/colorPrimary</item>
+        <item name="android:textSize">@dimen/dose_size</item>
+        <item name="android:text">Δόση</item>
+    </style>
+    <style name="confirm_appointment_button" parent="Base.Widget.AppCompat.Button">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:gravity">center_horizontal|center_vertical</item>
+        <item name="android:textSize">@dimen/button_text_size</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="android:text">@string/save_button</item>
+        <item name="android:layout_margin">@dimen/large_margin</item>
         <item name="android:background">@drawable/map_buttons</item>
     </style>
 </resources>

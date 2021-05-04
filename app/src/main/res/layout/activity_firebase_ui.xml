@@ -20,7 +20,7 @@
             app:layout_constraintVertical_chainStyle="spread_inside"
             tools:text="User name" />
 
-        <Button
+        <android.widget.Button
             android:id="@+id/find_hospital"
             style="@style/addAppointmentButtonLayout"
             android:layout_marginBottom="160dp"
@@ -31,7 +31,7 @@
             app:layout_constraintTop_toBottomOf="@+id/login_message"
             tools:text="Αναζήτηση εμβολιαστικού κέντρου" />
 
-        <Button
+        <android.widget.Button
             android:id="@+id/sign_out_button"
             style="@style/signoutButtonLayout"
             android:layout_marginBottom="24dp"

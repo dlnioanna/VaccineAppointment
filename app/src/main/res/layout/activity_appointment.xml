@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginBottom="@dimen/extra_large_margin">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_margin="@dimen/medium_margin"
+            android:layout_marginBottom="@dimen/extra_large_margin"
+            tools:context=".Appointment">
+
+            <CalendarView
+                android:id="@+id/calendarView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/small_margin"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <LinearLayout
+                android:id="@+id/name_layout"
+                style="@style/appointment_linear_layout"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/calendarView">
+
+                <TextView
+                    style="@style/appointment_text_view"
+                    android:text="@string/name_title" />
+
+                <EditText
+                    android:id="@+id/name_appointment"
+                    style="@style/appointment_edit_text"
+                    tools:text="Name" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/last_name_layout"
+                style="@style/appointment_linear_layout"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/name_layout">
+
+                <TextView
+                    style="@style/appointment_text_view"
+                    android:text="@string/last_name_title" />
+
+                <EditText
+                    android:id="@+id/last_name_appointment"
+                    style="@style/appointment_edit_text"
+                    tools:text="Lastname" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/telephone_layout"
+                style="@style/appointment_linear_layout"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/last_name_layout">
+
+                <TextView
+                    style="@style/appointment_text_view"
+                    android:text="@string/telephone_title" />
+
+                <EditText
+                    android:id="@+id/telephone_appointment"
+                    style="@style/appointment_edit_text"
+                    android:inputType="phone"
+                    tools:text="Telephone" />
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/first_dose"
+                style="@style/appointment_dose"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/telephone_layout" />
+
+            <TextView
+                android:id="@+id/second_dose"
+                style="@style/appointment_dose"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/first_dose" />
+
+
+            <android.widget.Button
+                style="@style/confirm_appointment_button"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/second_dose" />
+
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </ScrollView>
+</layout>

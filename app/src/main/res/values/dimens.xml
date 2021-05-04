@@ -9,11 +9,13 @@
     <dimen name="sign_out_button_bottom_margin">64dp</dimen>
     <dimen name="button_radius">16dp</dimen>
     <dimen name="login_message_margin">24dp</dimen>
-    <dimen name="hospital_list_title_size">24sp</dimen>
+    <dimen name="hospital_list_title_size">20sp</dimen>
     <dimen name="hospital_title_size">18sp</dimen>
+    <dimen name="dose_size">16sp</dimen>
     <dimen name="hospital_description_size">16sp</dimen>
     <dimen name="small_margin">4dp</dimen>
     <dimen name="medium_margin">8dp</dimen>
     <dimen name="large_margin">16dp</dimen>
     <dimen name="extra_large_margin">32dp</dimen>
+    <dimen name="progress_bar_size">100dp</dimen>
 </resources>
