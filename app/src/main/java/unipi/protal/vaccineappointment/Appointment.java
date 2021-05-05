@@ -15,6 +15,9 @@ import android.widget.DatePicker;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+
 import java.util.Calendar;
 
 import unipi.protal.vaccineappointment.databinding.ActivityAppointmentBinding;
@@ -23,15 +26,18 @@ public class Appointment extends AppCompatActivity {
     private ActivityAppointmentBinding binding;
     private static final int DAYS_BETWEEN_DOSES = 28;
     private String dateDoseOne,dateDoseTwo,getDateDoseTwo,timeDoseOne, finalDateOne,finalDateTwo;
-
+    private FirebaseAuth firebaseAuth;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         binding = ActivityAppointmentBinding.inflate(getLayoutInflater());
         View view = binding.getRoot();
         setContentView(view);
+        firebaseAuth = FirebaseAuth.getInstance();
+        FirebaseUser user=firebaseAuth.getCurrentUser();
+        Log.e("user in apointment is ", user.getDisplayName());
         Hospital hospital = getIntent().getParcelableExtra("hospital");
-        Log.e("hospital selected is ", hospital.getTitle());
+
         binding.datePickerImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -42,7 +48,7 @@ public class Appointment extends AppCompatActivity {
                     final DatePickerDialog mDatePicker = new DatePickerDialog(view.getContext(), new DatePickerDialog.OnDateSetListener() {
                         public void onDateSet(DatePicker datepicker, int selectedyear, int selectedmonth, int selectedday) {
                             Calendar c = Calendar.getInstance();
-                            c.set(selectedyear, selectedmonth - 1, selectedday, 0, 0);
+                            c.set(selectedyear, selectedmonth , selectedday);
                             dateDoseOne=String.format("%02d-%02d-%04d", selectedday ,selectedmonth , selectedyear);
                         binding.selectedDate.setText(String.format("%02d-%02d-%04d", selectedday ,selectedmonth , selectedyear));
                         if(timeDoseOne!=null){

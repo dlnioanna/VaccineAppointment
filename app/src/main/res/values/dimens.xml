@@ -11,7 +11,7 @@
     <dimen name="login_message_margin">24dp</dimen>
     <dimen name="hospital_list_title_size">20sp</dimen>
     <dimen name="hospital_title_size">18sp</dimen>
-    <dimen name="dose_size">16sp</dimen>
+    <dimen name="dose_size">20sp</dimen>
     <dimen name="hospital_description_size">16sp</dimen>
     <dimen name="small_margin">4dp</dimen>
     <dimen name="medium_margin">8dp</dimen>
