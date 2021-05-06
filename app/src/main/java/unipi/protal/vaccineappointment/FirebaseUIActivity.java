@@ -23,23 +23,8 @@ import unipi.protal.vaccineappointment.databinding.ActivityFirebaseUiBinding;
 
 import com.firebase.ui.auth.AuthUI;
 import com.firebase.ui.auth.IdpResponse;
-import com.google.android.gms.common.api.ApiException;
-import com.google.android.gms.common.api.ResolvableApiException;
-import com.google.android.gms.location.LocationRequest;
-import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.location.LocationSettingsRequest;
-import com.google.android.gms.location.LocationSettingsResponse;
-import com.google.android.gms.location.LocationSettingsStatusCodes;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.ChildEventListener;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-
 import java.util.Arrays;
 import java.util.List;
 
@@ -48,8 +33,7 @@ import static android.Manifest.permission.ACCESS_FINE_LOCATION;
 public class FirebaseUIActivity extends AppCompatActivity implements LocationListener {
     private static final int RC_SIGN_IN = 123;
     public static final int REQUEST_LOCATION = 1000;
-    public static final int GPS_ENABLE_REQUEST = 2000;
-    public static final String ANONYMOUS = "anonymous";
+    public static final int START_MAPS_ACTIVITY = 2000;
     private static final String TAG = "MainActivity";
     // Firebase instance variables
     private FirebaseAuth firebaseAuth;
@@ -58,6 +42,8 @@ public class FirebaseUIActivity extends AppCompatActivity implements LocationLis
     private ActivityFirebaseUiBinding binding;
     private LocationManager manager;
     private FirebaseUser user;
+    public static final String VACCINE_POINTS="vaccine_points";
+    public static final String APPOINTMENTS="appointments";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -120,6 +106,8 @@ public class FirebaseUIActivity extends AppCompatActivity implements LocationLis
                 Toast.makeText(this, response.getError().getMessage(), Toast.LENGTH_SHORT).show();
                 finish();
             }
+        }else if(requestCode==START_MAPS_ACTIVITY && resultCode==RESULT_OK){
+
         }
     }
 
@@ -166,7 +154,7 @@ public class FirebaseUIActivity extends AppCompatActivity implements LocationLis
                 ActivityCompat.requestPermissions(this, new String[]{ACCESS_FINE_LOCATION}, REQUEST_LOCATION);
             } else {
                 manager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this);
-                startActivity(new Intent(getApplicationContext(), MapsActivity.class));
+                startActivityForResult(new Intent(getApplicationContext(), MapsActivity.class),START_MAPS_ACTIVITY);
             }
         }
     }
@@ -177,7 +165,7 @@ public class FirebaseUIActivity extends AppCompatActivity implements LocationLis
         if (requestCode == REQUEST_LOCATION && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
             if (ActivityCompat.checkSelfPermission(this, ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
                 manager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this);
-                startActivity(new Intent(getApplicationContext(), MapsActivity.class));
+                startActivityForResult(new Intent(getApplicationContext(), MapsActivity.class),START_MAPS_ACTIVITY);
             }
         }
 

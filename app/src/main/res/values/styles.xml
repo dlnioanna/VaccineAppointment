@@ -143,7 +143,7 @@
         <item name="android:textSize">@dimen/dose_size</item>
         <item name="android:text">Δόση</item>
     </style>
-    <style name="confirm_appointment_button" parent="Base.Widget.AppCompat.Button">
+    <style name="save_appointment_button" parent="Base.Widget.AppCompat.Button">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:gravity">center_horizontal|center_vertical</item>

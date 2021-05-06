@@ -14,7 +14,7 @@
     <string name="last_name_title">Επίθετο</string>
     <string name="telephone_title">Τηλέφωνο</string>
     <string name="email_title">Email</string>
-    <string name="save_button">Επιβεβαίωση</string>
+    <string name="save_button">Αποθήκευση</string>
     <string name="select_date_text">Επιλέξτε ημέρα</string>
     <string name="select_time_text">Επιλέξτε ώρα</string>
     <string name="first_dose">1η δόση : </string>
@@ -23,4 +23,5 @@
     <string name="gps_message">Για να συνεχίσετε ενεργοποιήστε την τοποθεσία συσκευής.</string>
     <string name="gps_yes">ΟΚ</string>
     <string name="gps_no">ΟΧΙ, ΕΥΧΑΡΙΣΤΩ</string>
+    <string name="save_appointment_error_message">Παρακαλώ συμπληρώστε όλα τα πεδία</string>
 </resources>

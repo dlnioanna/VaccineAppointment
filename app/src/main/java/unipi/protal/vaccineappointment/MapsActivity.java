@@ -1,21 +1,16 @@
 package unipi.protal.vaccineappointment;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AlertDialog;
 import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.FragmentActivity;
 
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
-import android.provider.Settings;
-import android.util.Log;
 import android.view.View;
-import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -34,13 +29,14 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
-import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import unipi.protal.vaccineappointment.databinding.ActivityMapsBinding;
 
 import static android.Manifest.permission.ACCESS_FINE_LOCATION;
 import static unipi.protal.vaccineappointment.FirebaseUIActivity.REQUEST_LOCATION;
+import static unipi.protal.vaccineappointment.FirebaseUIActivity.START_MAPS_ACTIVITY;
+import static unipi.protal.vaccineappointment.FirebaseUIActivity.VACCINE_POINTS;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback,
         HospitalAdapter.ListItemClickListener, LocationListener {
@@ -75,7 +71,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             currentLocation = manager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
         }
         firebaseDatabase = FirebaseDatabase.getInstance();
-        databaseReference = firebaseDatabase.getReference().child("vaccine_points");
+        databaseReference = firebaseDatabase.getReference().child(VACCINE_POINTS);
         hospitalList = new ArrayList<>();
         databaseReference.addValueEventListener(new ValueEventListener() {
             @Override
@@ -172,7 +168,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     @Override
     public void onListItemClick(int clickedItemIndex) {
-        Intent i = new Intent(this, Appointment.class);
+        Intent i = new Intent(this, AppointmentActivity.class);
         i.putExtra("hospital", hospitalsByDistance.get(clickedItemIndex));
         startActivity(i);
 

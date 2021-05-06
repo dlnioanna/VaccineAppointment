@@ -13,7 +13,7 @@
             android:layout_height="wrap_content"
             android:layout_margin="@dimen/medium_margin"
             android:layout_marginBottom="@dimen/extra_large_margin"
-            tools:context=".Appointment">
+            tools:context=".AppointmentActivity">
 
             <LinearLayout
                 android:id="@+id/date_layout"
@@ -129,7 +129,8 @@
 
 
             <android.widget.Button
-                style="@style/confirm_appointment_button"
+                android:id="@+id/save_appointment"
+                style="@style/save_appointment_button"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.533"
