@@ -3,6 +3,7 @@ package unipi.protal.vaccineappointment;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.content.Intent;
@@ -124,7 +125,9 @@ public class AppointmentActivity extends AppCompatActivity {
                         binding.telephoneAppointment.getText().toString(),dateDoseOne, timeDoseOne, dateDoseTwo);
                         databaseReference.child(hospitalId).child(APPOINTMENTS).child(user.getUid()).setValue(appointment);
                     }
-                   // todo finishActivity();
+                    Intent returnIntent = new Intent();
+                    setResult(Activity.RESULT_OK,returnIntent);
+                    finish();
                 }
 
                 @Override

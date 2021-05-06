@@ -10,6 +10,8 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.provider.Settings;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.Toast;
@@ -67,7 +69,7 @@ public class FirebaseUIActivity extends AppCompatActivity implements LocationLis
             }
         };
         manager = (LocationManager) getSystemService(LOCATION_SERVICE);
-        binding.signOutButton.setOnClickListener(v -> signOut());
+//        binding.signOutButton.setOnClickListener(v -> signOut());
         binding.findHospital.setOnClickListener(v -> gps(v));
         createSignInIntent();
     }
@@ -107,9 +109,28 @@ public class FirebaseUIActivity extends AppCompatActivity implements LocationLis
                 finish();
             }
         }else if(requestCode==START_MAPS_ACTIVITY && resultCode==RESULT_OK){
-
+            Toast.makeText(this, "", Toast.LENGTH_SHORT).show();
         }
     }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.main, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+        if (id == R.id.action_sign_out) {
+            signOut();
+        }
+        return super.onOptionsItemSelected(item);
+        }
+
 
     @Override
     protected void onSaveInstanceState(@NonNull Bundle outState) {

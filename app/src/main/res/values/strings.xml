@@ -24,4 +24,5 @@
     <string name="gps_yes">ΟΚ</string>
     <string name="gps_no">ΟΧΙ, ΕΥΧΑΡΙΣΤΩ</string>
     <string name="save_appointment_error_message">Παρακαλώ συμπληρώστε όλα τα πεδία</string>
+    <string name="save_appointment_message">Το ραντεβού σας έχει καταχωρηθεί</string>
 </resources>

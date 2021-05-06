@@ -4,19 +4,23 @@ import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.FragmentActivity;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.view.View;
-
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptor;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
+import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
@@ -35,7 +39,6 @@ import unipi.protal.vaccineappointment.databinding.ActivityMapsBinding;
 
 import static android.Manifest.permission.ACCESS_FINE_LOCATION;
 import static unipi.protal.vaccineappointment.FirebaseUIActivity.REQUEST_LOCATION;
-import static unipi.protal.vaccineappointment.FirebaseUIActivity.START_MAPS_ACTIVITY;
 import static unipi.protal.vaccineappointment.FirebaseUIActivity.VACCINE_POINTS;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback,
@@ -52,6 +55,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private Marker marker;
     private ArrayList<Hospital> hospitalList;
     private List<Hospital> hospitalsByDistance;
+    private static final int START_APOINTMENT_ACTIVITY=4000;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -127,6 +131,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         hospitalsByDistance = hospitalList.stream()
                 .sorted(Comparator.comparing(Hospital::getDistance))
                 .collect(Collectors.toList());
+        // add markers
+        for(int i=0;i<hospitalsByDistance.size();i++){
+            mMap.addMarker(new MarkerOptions().position(new LatLng(hospitalsByDistance.get(i).getLatitude(), hospitalsByDistance.get(i).getLongitute()))
+            .title(hospitalsByDistance.get(i).getTitle()).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)));
+        }
         hospitalAdapter = new HospitalAdapter(hospitalsByDistance, this);
         binding.hospitalRecyclerView.setAdapter(hospitalAdapter);
     }
@@ -141,7 +150,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         }
 
     }
-
+    public BitmapDescriptor getMarkerIcon(int color) {
+        float[] hsv = new float[3];
+        Color.colorToHSV(color, hsv);
+        return BitmapDescriptorFactory.defaultMarker(hsv[0]);
+    }
     /**
      * Manipulates the map once available.
      * This callback is triggered when the map is ready to be used.
@@ -157,12 +170,13 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mapReady = true;
         try {
             position = new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude());
+            mMap.addCircle(new CircleOptions().center(position).radius(20).strokeColor(Color.BLUE).fillColor(Color.BLUE));
         } catch (NullPointerException ne) {
             ne.printStackTrace();
         }
-        marker = mMap.addMarker(new MarkerOptions().position(position));
         CameraPosition target = CameraPosition.builder().target(position).zoom(14).build();
         mMap.moveCamera(CameraUpdateFactory.newCameraPosition(target));
+        mMap.animateCamera(CameraUpdateFactory.newCameraPosition(target),2000,null);
 
     }
 
@@ -170,16 +184,20 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public void onListItemClick(int clickedItemIndex) {
         Intent i = new Intent(this, AppointmentActivity.class);
         i.putExtra("hospital", hospitalsByDistance.get(clickedItemIndex));
-        startActivity(i);
-
+        startActivityForResult(i,START_APOINTMENT_ACTIVITY);
     }
 
     @Override
     public void onLocationChanged(@NonNull Location location) {
-        marker.remove();
+//        if(marker!=null){
+//            marker.remove();
+//        }
+
         currentLocation = location;
         position = new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude());
-        marker = mMap.addMarker(new MarkerOptions().position(position));
+//        marker = mMap.addMarker(new MarkerOptions().position(position));
+        mMap.clear();
+        mMap.addCircle(new CircleOptions().center(position).radius(20).strokeColor(Color.BLUE).fillColor(Color.BLUE));
         CameraPosition target = CameraPosition.builder().target(position).zoom(14).build();
         mMap.moveCamera(CameraUpdateFactory.newCameraPosition(target));
         calculateDistance(currentLocation);
@@ -209,5 +227,15 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(requestCode==START_APOINTMENT_ACTIVITY && resultCode==RESULT_OK){
+            Intent returnIntent = new Intent();
+            setResult(Activity.RESULT_OK,returnIntent);
+            finish();
+
+        }
+    }
 
 }
