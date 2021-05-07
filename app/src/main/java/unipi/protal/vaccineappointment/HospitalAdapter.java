@@ -1,5 +1,6 @@
 package unipi.protal.vaccineappointment;
 
+import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,11 +11,13 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.List;
 
+import unipi.protal.vaccineappointment.entities.Hospital;
+
 public class HospitalAdapter extends RecyclerView.Adapter<HospitalAdapter.HospitalViewHolder> {
     private List<Hospital> hospitalList;
     final private ListItemClickListener mOnClickListener;
     private int numOfHospitals;
-   // private static int viewHolderCount;
+    private Context context;
 
     public interface ListItemClickListener {
         void onListItemClick(int clickedItemIndex);
@@ -24,7 +27,6 @@ public class HospitalAdapter extends RecyclerView.Adapter<HospitalAdapter.Hospit
         mOnClickListener = listener;
         hospitalList=hospitals;
         numOfHospitals = hospitalList.size();
-        //viewHolderCount = 0;
     }
 
     @NonNull
@@ -33,6 +35,7 @@ public class HospitalAdapter extends RecyclerView.Adapter<HospitalAdapter.Hospit
         LayoutInflater inflater = LayoutInflater.from(parent.getContext());
         View view = inflater.inflate(R.layout.hospital_view, parent, false);
         HospitalViewHolder viewHolder = new HospitalViewHolder(view);
+        context = parent.getContext();
         return viewHolder;
     }
 
@@ -40,6 +43,8 @@ public class HospitalAdapter extends RecyclerView.Adapter<HospitalAdapter.Hospit
     public void onBindViewHolder(@NonNull HospitalAdapter.HospitalViewHolder holder, int position) {
         holder.hospitalTitle.setText(hospitalList.get(position).getTitle());
         holder.hospitalDescription.setText(hospitalList.get(position).getDescription());
+        int backgroundColorForViewHolder = ColorUtils.getViewHolderBackgroundColor(context,position);
+        holder.itemView.setBackgroundColor(backgroundColorForViewHolder);
 
     }
 

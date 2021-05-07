@@ -1,9 +1,7 @@
-package unipi.protal.vaccineappointment;
+package unipi.protal.vaccineappointment.activities;
 
-import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.IntentSender;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationListener;
@@ -13,7 +11,6 @@ import android.provider.Settings;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -21,6 +18,7 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 
+import unipi.protal.vaccineappointment.R;
 import unipi.protal.vaccineappointment.databinding.ActivityFirebaseUiBinding;
 
 import com.firebase.ui.auth.AuthUI;
@@ -69,7 +67,6 @@ public class FirebaseUIActivity extends AppCompatActivity implements LocationLis
             }
         };
         manager = (LocationManager) getSystemService(LOCATION_SERVICE);
-//        binding.signOutButton.setOnClickListener(v -> signOut());
         binding.findHospital.setOnClickListener(v -> gps(v));
         createSignInIntent();
     }

@@ -13,7 +13,7 @@
             android:layout_height="wrap_content"
             android:layout_margin="@dimen/medium_margin"
             android:layout_marginBottom="@dimen/extra_large_margin"
-            tools:context=".AppointmentActivity">
+            tools:context=".activities.AppointmentActivity">
 
             <LinearLayout
                 android:id="@+id/date_layout"

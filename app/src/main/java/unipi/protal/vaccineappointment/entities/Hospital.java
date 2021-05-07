@@ -1,7 +1,4 @@
-package unipi.protal.vaccineappointment;
-
-import java.io.Serializable;
-import java.util.ArrayList;
+package unipi.protal.vaccineappointment.entities;
 
 import android.os.Parcel;
 import android.os.Parcelable;

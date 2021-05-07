@@ -14,14 +14,5 @@
     <color name="colorPrimary">#1476C5</color>
     <color name="colorPrimaryVariant">#004D8A</color>
     <color name="red">#FFCC0000</color>
-    <color name="material100Green">#C8E6C9</color>
-    <color name="material150Green">#B7DEB8</color>
-    <color name="material200Green">#A5D6A7</color>
-    <color name="material250Green">#93CF96</color>
-    <color name="material300Green">#81C784</color>
-    <color name="material350Green">#74C177</color>
-    <color name="material400Green">#66BB6A</color>
-    <color name="material450Green">#59B55D</color>
-    <color name="material500Green">#4CAF50</color>
-    <color name="material550Green">#48A84C</color>
+    <color name="adapter_color">#F1F8FB</color>
 </resources>

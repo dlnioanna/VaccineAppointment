@@ -1,4 +1,4 @@
-package unipi.protal.vaccineappointment;
+package unipi.protal.vaccineappointment.activities;
 
 import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
@@ -13,6 +13,8 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Toast;
+
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -35,11 +37,14 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import unipi.protal.vaccineappointment.entities.Hospital;
+import unipi.protal.vaccineappointment.HospitalAdapter;
+import unipi.protal.vaccineappointment.R;
 import unipi.protal.vaccineappointment.databinding.ActivityMapsBinding;
 
 import static android.Manifest.permission.ACCESS_FINE_LOCATION;
-import static unipi.protal.vaccineappointment.FirebaseUIActivity.REQUEST_LOCATION;
-import static unipi.protal.vaccineappointment.FirebaseUIActivity.VACCINE_POINTS;
+import static unipi.protal.vaccineappointment.activities.FirebaseUIActivity.REQUEST_LOCATION;
+import static unipi.protal.vaccineappointment.activities.FirebaseUIActivity.VACCINE_POINTS;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback,
         HospitalAdapter.ListItemClickListener, LocationListener {
@@ -55,7 +60,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private Marker marker;
     private ArrayList<Hospital> hospitalList;
     private List<Hospital> hospitalsByDistance;
-    private static final int START_APOINTMENT_ACTIVITY=4000;
+    private static final int START_APOINTMENT_ACTIVITY = 4000;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -84,17 +89,17 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     Hospital hospital = snapshot.getValue(Hospital.class);
                     hospitalList.add(hospital);
                 }
+                binding.firebaseProgressBar.setVisibility(View.GONE);
+                createAdapter();
                 if (currentLocation != null) {
                     calculateDistance(currentLocation);
-                    binding.firebaseProgressBar.setVisibility(View.GONE);
-                    createAdapter();
                 }
-
             }
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
                 // Getting hospitals failed, log a message
+                Toast.makeText(getApplicationContext(), databaseError.getMessage(), Toast.LENGTH_SHORT).show();
 
             }
         });
@@ -127,34 +132,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         });
     }
 
-    private void createAdapter() {
-        hospitalsByDistance = hospitalList.stream()
-                .sorted(Comparator.comparing(Hospital::getDistance))
-                .collect(Collectors.toList());
-        // add markers
-        for(int i=0;i<hospitalsByDistance.size();i++){
-            mMap.addMarker(new MarkerOptions().position(new LatLng(hospitalsByDistance.get(i).getLatitude(), hospitalsByDistance.get(i).getLongitute()))
-            .title(hospitalsByDistance.get(i).getTitle()).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)));
-        }
-        hospitalAdapter = new HospitalAdapter(hospitalsByDistance, this);
-        binding.hospitalRecyclerView.setAdapter(hospitalAdapter);
-    }
-
-    private void calculateDistance(Location location) {
-        for (Hospital hospital : hospitalList) {
-            Location hospitalLocation = new Location(hospital.getTitle());
-            hospitalLocation.setLatitude(hospital.getLatitude());
-            hospitalLocation.setLongitude(hospital.getLongitute());
-            Float distance = hospitalLocation.distanceTo(location);
-            hospital.setDistance(distance);
-        }
-
-    }
-    public BitmapDescriptor getMarkerIcon(int color) {
-        float[] hsv = new float[3];
-        Color.colorToHSV(color, hsv);
-        return BitmapDescriptorFactory.defaultMarker(hsv[0]);
-    }
     /**
      * Manipulates the map once available.
      * This callback is triggered when the map is ready to be used.
@@ -170,13 +147,13 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mapReady = true;
         try {
             position = new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude());
-            mMap.addCircle(new CircleOptions().center(position).radius(20).strokeColor(Color.BLUE).fillColor(Color.BLUE));
+            mMap.addCircle(new CircleOptions().center(position).radius(30).strokeColor(Color.BLUE).fillColor(Color.BLUE));
         } catch (NullPointerException ne) {
             ne.printStackTrace();
         }
         CameraPosition target = CameraPosition.builder().target(position).zoom(14).build();
         mMap.moveCamera(CameraUpdateFactory.newCameraPosition(target));
-        mMap.animateCamera(CameraUpdateFactory.newCameraPosition(target),2000,null);
+        mMap.animateCamera(CameraUpdateFactory.newCameraPosition(target), 2000, null);
 
     }
 
@@ -184,27 +161,42 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public void onListItemClick(int clickedItemIndex) {
         Intent i = new Intent(this, AppointmentActivity.class);
         i.putExtra("hospital", hospitalsByDistance.get(clickedItemIndex));
-        startActivityForResult(i,START_APOINTMENT_ACTIVITY);
+        startActivityForResult(i, START_APOINTMENT_ACTIVITY);
     }
 
     @Override
     public void onLocationChanged(@NonNull Location location) {
-//        if(marker!=null){
-//            marker.remove();
-//        }
-
         currentLocation = location;
         position = new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude());
-//        marker = mMap.addMarker(new MarkerOptions().position(position));
         mMap.clear();
-        mMap.addCircle(new CircleOptions().center(position).radius(20).strokeColor(Color.BLUE).fillColor(Color.BLUE));
+        mMap.addCircle(new CircleOptions().center(position).radius(30).strokeColor(Color.BLUE).fillColor(Color.BLUE));
         CameraPosition target = CameraPosition.builder().target(position).zoom(14).build();
         mMap.moveCamera(CameraUpdateFactory.newCameraPosition(target));
-        calculateDistance(currentLocation);
-        binding.firebaseProgressBar.setVisibility(View.GONE);
-        createAdapter();
     }
 
+    private void createAdapter() {
+        hospitalsByDistance = hospitalList.stream()
+                .sorted(Comparator.comparing(Hospital::getDistance))
+                .collect(Collectors.toList());
+        // add markers for each hospital
+        for (int i = 0; i < hospitalsByDistance.size(); i++) {
+            mMap.addMarker(new MarkerOptions().position(new LatLng(hospitalsByDistance.get(i).getLatitude(), hospitalsByDistance.get(i).getLongitute()))
+                    .title(hospitalsByDistance.get(i).getTitle()).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)));
+        }
+        hospitalAdapter = new HospitalAdapter(hospitalsByDistance, this);
+        binding.hospitalRecyclerView.setAdapter(hospitalAdapter);
+    }
+
+    private void calculateDistance(Location location) {
+        for (Hospital hospital : hospitalList) {
+            Location hospitalLocation = new Location(hospital.getTitle());
+            hospitalLocation.setLatitude(hospital.getLatitude());
+            hospitalLocation.setLongitude(hospital.getLongitute());
+            Float distance = hospitalLocation.distanceTo(location);
+            hospital.setDistance(distance);
+        }
+
+    }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
@@ -230,9 +222,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if(requestCode==START_APOINTMENT_ACTIVITY && resultCode==RESULT_OK){
+        if (requestCode == START_APOINTMENT_ACTIVITY && resultCode == RESULT_OK) {
             Intent returnIntent = new Intent();
-            setResult(Activity.RESULT_OK,returnIntent);
+            setResult(Activity.RESULT_OK, returnIntent);
             finish();
 
         }

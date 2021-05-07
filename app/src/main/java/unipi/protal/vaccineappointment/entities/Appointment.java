@@ -1,4 +1,4 @@
-package unipi.protal.vaccineappointment;
+package unipi.protal.vaccineappointment.entities;
 
 public class Appointment {
     private String name;

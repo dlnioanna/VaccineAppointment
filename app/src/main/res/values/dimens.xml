@@ -5,7 +5,7 @@
     <dimen name="user_name_text_view_start_end_margin">16dp</dimen>
     <dimen name="button_padding">16dp</dimen>
     <dimen name="button_text_size">16sp</dimen>
-    <dimen name="message_text_size">24sp</dimen>
+    <dimen name="message_text_size">20sp</dimen>
     <dimen name="sign_out_button_bottom_margin">64dp</dimen>
     <dimen name="button_radius">16dp</dimen>
     <dimen name="login_message_margin">24dp</dimen>
