@@ -17,5 +17,6 @@
     <dimen name="medium_margin">8dp</dimen>
     <dimen name="large_margin">16dp</dimen>
     <dimen name="extra_large_margin">32dp</dimen>
+    <dimen name="extra_extra_large_margin">64dp</dimen>
     <dimen name="progress_bar_size">100dp</dimen>
 </resources>

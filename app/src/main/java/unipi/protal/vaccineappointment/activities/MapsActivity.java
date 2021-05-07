@@ -22,6 +22,7 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
+import com.google.android.gms.maps.model.Circle;
 import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
@@ -61,6 +62,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private ArrayList<Hospital> hospitalList;
     private List<Hospital> hospitalsByDistance;
     private static final int START_APOINTMENT_ACTIVITY = 4000;
+    private CircleOptions circleOptions;
+    private Circle circle;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -147,7 +150,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mapReady = true;
         try {
             position = new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude());
-            mMap.addCircle(new CircleOptions().center(position).radius(30).strokeColor(Color.BLUE).fillColor(Color.BLUE));
+            circleOptions = new CircleOptions().center(position).radius(30).strokeColor(Color.BLUE).fillColor(Color.BLUE);
+           circle= mMap.addCircle(circleOptions);
         } catch (NullPointerException ne) {
             ne.printStackTrace();
         }
@@ -167,16 +171,19 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     @Override
     public void onLocationChanged(@NonNull Location location) {
         currentLocation = location;
-        if (hospitalsByDistance == null) {
+        if (hospitalsByDistance.size() == 0) {
             calculateDistance(currentLocation);
             binding.firebaseProgressBar.setVisibility(View.GONE);
             createAdapter();
         }
         position = new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude());
-        mMap.clear();
-        mMap.addCircle(new CircleOptions().center(position).radius(30).strokeColor(Color.BLUE).fillColor(Color.BLUE));
+        circle.remove();
+        circleOptions = new CircleOptions().center(position).radius(30).strokeColor(Color.BLUE).fillColor(Color.BLUE);
+        circle=mMap.addCircle(circleOptions);
         CameraPosition target = CameraPosition.builder().target(position).zoom(14).build();
         mMap.moveCamera(CameraUpdateFactory.newCameraPosition(target));
+
+
     }
 
     private void createAdapter() {

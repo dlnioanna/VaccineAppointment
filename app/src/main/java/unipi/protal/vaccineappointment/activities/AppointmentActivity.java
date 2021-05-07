@@ -1,5 +1,6 @@
 package unipi.protal.vaccineappointment.activities;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.Activity;
@@ -53,7 +54,7 @@ public class AppointmentActivity extends AppCompatActivity {
         firebaseDatabase = FirebaseDatabase.getInstance();
         databaseReference = firebaseDatabase.getReference(VACCINE_POINTS);
         user = firebaseAuth.getCurrentUser();
-        binding.appointmentHospitalTitle.setText("Νοσοκομείο "+hospital.getTitle());
+        binding.appointmentHospitalTitle.setText(hospital.getTitle());
         binding.datePickerImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -122,11 +123,11 @@ public class AppointmentActivity extends AppCompatActivity {
                             hospitalId = snapshot.getKey();
                         }
                         Appointment appointment = new Appointment(binding.nameAppointment.getText().toString(), binding.lastNameAppointment.getText().toString(),
-                        binding.telephoneAppointment.getText().toString(),dateDoseOne, timeDoseOne, dateDoseTwo);
+                                binding.telephoneAppointment.getText().toString(), dateDoseOne, timeDoseOne, dateDoseTwo);
                         databaseReference.child(hospitalId).child(APPOINTMENTS).child(user.getUid()).setValue(appointment);
                     }
                     Intent returnIntent = new Intent();
-                    setResult(Activity.RESULT_OK,returnIntent);
+                    setResult(Activity.RESULT_OK, returnIntent);
                     finish();
                 }
 
@@ -148,5 +149,27 @@ public class AppointmentActivity extends AppCompatActivity {
             Toast.makeText(this, getString(R.string.save_appointment_error_message), Toast.LENGTH_LONG).show();
             return false;
         }
+    }
+
+    @Override
+    protected void onSaveInstanceState(@NonNull Bundle outState) {
+        outState.putParcelable("f_user", user);
+        outState.putString("name", binding.nameAppointment.getText().toString());
+        outState.putString("last_name", binding.lastNameAppointment.getText().toString());
+        outState.putString("telephone", binding.telephoneAppointment.getText().toString());
+        outState.putString("date", dateDoseOne);
+        outState.putString("time", timeDoseOne);
+        super.onSaveInstanceState(outState);
+    }
+
+    @Override
+    protected void onRestoreInstanceState(@NonNull Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        user = savedInstanceState.getParcelable("f_user");
+        binding.nameAppointment.setText(savedInstanceState.getString("name"));
+        binding.lastNameAppointment.setText(savedInstanceState.getString("last_name"));
+        binding.telephoneAppointment.setText(savedInstanceState.getString("telephone"));
+        dateDoseOne = savedInstanceState.getString("dateDoseOne");
+        timeDoseOne = savedInstanceState.getString("time");
     }
 }

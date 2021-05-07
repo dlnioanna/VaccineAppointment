@@ -8,6 +8,7 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.provider.Settings;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -68,7 +69,10 @@ public class FirebaseUIActivity extends AppCompatActivity implements LocationLis
         };
         manager = (LocationManager) getSystemService(LOCATION_SERVICE);
         binding.findHospital.setOnClickListener(v -> gps(v));
-        createSignInIntent();
+        if(savedInstanceState==null){
+            createSignInIntent();
+        }
+
     }
 
     public void createSignInIntent() {
@@ -106,7 +110,6 @@ public class FirebaseUIActivity extends AppCompatActivity implements LocationLis
                 finish();
             }
         }else if(requestCode==START_MAPS_ACTIVITY && resultCode==RESULT_OK){
-            Toast.makeText(this, "", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -131,15 +134,16 @@ public class FirebaseUIActivity extends AppCompatActivity implements LocationLis
 
     @Override
     protected void onSaveInstanceState(@NonNull Bundle outState) {
-        super.onSaveInstanceState(outState);
         outState.putParcelable("f_user", user);
+        super.onSaveInstanceState(outState);
     }
 
     @Override
     protected void onRestoreInstanceState(@NonNull Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
         user = savedInstanceState.getParcelable("f_user");
-    }
+        binding.userName.setText(user.getDisplayName());
+           }
 
     @Override
     protected void onResume() {
