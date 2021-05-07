@@ -12,6 +12,7 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
@@ -19,7 +20,6 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.CircleOptions;
@@ -71,7 +71,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         /*
         default lat long to Syntagma square
          */
-        position = new LatLng(37.9750952, 23.7328519);
+        position = new LatLng(37.9755024, 23.7351172);
         manager = (LocationManager) getSystemService(LOCATION_SERVICE);
         if (ActivityCompat.checkSelfPermission(this, ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this, new String[]{ACCESS_FINE_LOCATION}, REQUEST_LOCATION);
@@ -89,10 +89,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     Hospital hospital = snapshot.getValue(Hospital.class);
                     hospitalList.add(hospital);
                 }
-                binding.firebaseProgressBar.setVisibility(View.GONE);
-                createAdapter();
                 if (currentLocation != null) {
                     calculateDistance(currentLocation);
+                    binding.firebaseProgressBar.setVisibility(View.GONE);
+                    createAdapter();
                 }
             }
 
@@ -167,6 +167,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     @Override
     public void onLocationChanged(@NonNull Location location) {
         currentLocation = location;
+        if (hospitalsByDistance == null) {
+            calculateDistance(currentLocation);
+            binding.firebaseProgressBar.setVisibility(View.GONE);
+            createAdapter();
+        }
         position = new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude());
         mMap.clear();
         mMap.addCircle(new CircleOptions().center(position).radius(30).strokeColor(Color.BLUE).fillColor(Color.BLUE));

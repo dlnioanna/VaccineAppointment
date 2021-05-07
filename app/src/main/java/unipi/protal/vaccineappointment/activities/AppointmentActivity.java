@@ -53,6 +53,7 @@ public class AppointmentActivity extends AppCompatActivity {
         firebaseDatabase = FirebaseDatabase.getInstance();
         databaseReference = firebaseDatabase.getReference(VACCINE_POINTS);
         user = firebaseAuth.getCurrentUser();
+        binding.appointmentHospitalTitle.setText("Νοσοκομείο "+hospital.getTitle());
         binding.datePickerImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
