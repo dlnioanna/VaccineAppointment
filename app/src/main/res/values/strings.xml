@@ -5,7 +5,7 @@
     <string name="login_error">Ανεπιτυχής προσπάθεια σύνδεσης. Προσπαθήστε ξάνα.</string>
     <string name="title_activity_maps">Map</string>
     <string name="maps_api_key">AIzaSyBYgC_jte0OKMviFXK_LRuxaY9L8hOy_-c</string>
-    <string name="login_message">Αναζητείστε το πλησιέστερο εμβολιαστικό κέντρο και κλείστε το ραντεβού σας.</string>
+    <string name="login_message">Αναζητείστε το πλησιέστερο εμβολιαστικό κέντρο με βάση την τοποθεσίας σας και επιλέξτε ημέρα και ώρα εμβολιασμού.</string>
     <string name="btn_map">Χάρτης</string>
     <string name="btn_satellite">Δορυφόρος</string>
     <string name="btn_hybrid">Έδαφος</string>

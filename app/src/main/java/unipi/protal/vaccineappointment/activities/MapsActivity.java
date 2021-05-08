@@ -151,7 +151,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         try {
             position = new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude());
             circleOptions = new CircleOptions().center(position).radius(30).strokeColor(Color.BLUE).fillColor(Color.BLUE);
-           circle= mMap.addCircle(circleOptions);
+            circle = mMap.addCircle(circleOptions);
         } catch (NullPointerException ne) {
             ne.printStackTrace();
         }
@@ -171,15 +171,19 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     @Override
     public void onLocationChanged(@NonNull Location location) {
         currentLocation = location;
-        if (hospitalsByDistance.size() == 0) {
+        if (hospitalsByDistance == null) {
             calculateDistance(currentLocation);
             binding.firebaseProgressBar.setVisibility(View.GONE);
             createAdapter();
         }
         position = new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude());
-        circle.remove();
+        try {
+            circle.remove();
+        } catch (NullPointerException ne) {
+            ne.printStackTrace();
+        }
         circleOptions = new CircleOptions().center(position).radius(30).strokeColor(Color.BLUE).fillColor(Color.BLUE);
-        circle=mMap.addCircle(circleOptions);
+        circle = mMap.addCircle(circleOptions);
         CameraPosition target = CameraPosition.builder().target(position).zoom(14).build();
         mMap.moveCamera(CameraUpdateFactory.newCameraPosition(target));
 
@@ -207,7 +211,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             Float distance = hospitalLocation.distanceTo(location);
             hospital.setDistance(distance);
         }
-
     }
 
     @Override
@@ -238,8 +241,19 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             Intent returnIntent = new Intent();
             setResult(Activity.RESULT_OK, returnIntent);
             finish();
-
         }
+    }
+
+    @Override
+    protected void onSaveInstanceState(@NonNull Bundle outState) {
+        outState.putParcelable("current_location", currentLocation);
+        super.onSaveInstanceState(outState);
+    }
+
+    @Override
+    protected void onRestoreInstanceState(@NonNull Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        currentLocation = savedInstanceState.getParcelable("current_location");
     }
 
 }

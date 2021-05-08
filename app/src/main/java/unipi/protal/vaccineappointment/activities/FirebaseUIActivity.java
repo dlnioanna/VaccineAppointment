@@ -75,7 +75,6 @@ public class FirebaseUIActivity extends AppCompatActivity implements LocationLis
                 if (user != null) {
                     // User is signed in
                     onSignedInInitialize(user.getDisplayName());
-                    checkUserAppointment();
                 } else {
                     // User is signed out
                     createSignInIntent();
@@ -125,6 +124,7 @@ public class FirebaseUIActivity extends AppCompatActivity implements LocationLis
                 finish();
             }
         } else if (requestCode == START_MAPS_ACTIVITY && resultCode == RESULT_OK) {
+
         }
     }
 
@@ -242,20 +242,5 @@ public class FirebaseUIActivity extends AppCompatActivity implements LocationLis
         alertDialog.show();
     }
 
-    private void checkUserAppointment() {
-        Query query = databaseReference.orderByChild(APPOINTMENTS);
-        query.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                if (dataSnapshot.hasChild(user.getUid())) {
-                    binding.loginMessage.setText("exeis hdh rantexou");
-                }
-            }
 
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
-    }
 }

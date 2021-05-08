@@ -185,7 +185,6 @@ public class AppointmentActivity extends AppCompatActivity {
         calendar.add(Calendar.DAY_OF_MONTH, DAYS_BETWEEN_DOSES);
         dateDoseTwo = String.format("%02d-%02d-%04d", calendar.get(Calendar.DAY_OF_MONTH), calendar.get(Calendar.MONTH)
                 , calendar.get(Calendar.YEAR));
-        Log.e("on rotation calendar", dateDoseOne+" "+dateDoseTwo);
         binding.selectedTime.setText(timeDoseOne);
         if ((dateDoseOne != null)&&(timeDoseOne != null)) {
             binding.firstDose.setText(getString(R.string.first_dose) + dateDoseOne + " και ώρα " + timeDoseOne);
