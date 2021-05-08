@@ -7,7 +7,9 @@ import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.content.Intent;
+import android.icu.text.SimpleDateFormat;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.DatePicker;
 import android.widget.TimePicker;
@@ -22,6 +24,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
+import java.text.ParseException;
 import java.util.Calendar;
 
 import unipi.protal.vaccineappointment.entities.Appointment;
@@ -42,7 +45,6 @@ public class AppointmentActivity extends AppCompatActivity {
     private FirebaseUser user;
     private Hospital hospital;
     private String hospitalId;
-    private Calendar calendar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,20 +67,20 @@ public class AppointmentActivity extends AppCompatActivity {
                 int mDay = mcurrentDate.get(Calendar.DAY_OF_MONTH);
                 final DatePickerDialog mDatePicker = new DatePickerDialog(view.getContext(), new DatePickerDialog.OnDateSetListener() {
                     public void onDateSet(DatePicker datepicker, int selectedyear, int selectedmonth, int selectedday) {
-                        calendar = Calendar.getInstance();
-                        calendar.set(selectedyear, selectedmonth, selectedday);
-                        dateDoseOne = String.format("%02d-%02d-%04d", selectedday, selectedmonth, selectedyear);
-                        binding.selectedDate.setText(String.format("%02d-%02d-%04d", selectedday, selectedmonth, selectedyear));
+                        Calendar calendar = Calendar.getInstance();
+                        calendar.set(selectedyear, selectedmonth+1, selectedday);
+                        dateDoseOne = String.format("%02d-%02d-%04d", selectedday, selectedmonth+1, selectedyear);
+                        binding.selectedDate.setText(String.format("%02d-%02d-%04d", selectedday, selectedmonth+1, selectedyear));
                         if (timeDoseOne != null) {
                             binding.firstDose.setText(getString(R.string.first_dose) + dateDoseOne + " και ώρα " + timeDoseOne);
-                            binding.firstDose.setVisibility(View.VISIBLE);
+                            binding.dateOneLinearLayout.setVisibility(View.VISIBLE);
                         }
                         calendar.add(Calendar.DAY_OF_MONTH, DAYS_BETWEEN_DOSES);
                         dateDoseTwo = String.format("%02d-%02d-%04d", calendar.get(Calendar.DAY_OF_MONTH), calendar.get(Calendar.MONTH)
                                 , calendar.get(Calendar.YEAR));
                         if (timeDoseOne != null) {
                             binding.secondDose.setText(getString(R.string.second_dose) + dateDoseTwo + " και ώρα " + timeDoseOne);
-                            binding.secondDose.setVisibility(View.VISIBLE);
+                            binding.dateTwoLinearLayout.setVisibility(View.VISIBLE);
                         }
                     }
                 }, mYear, mMonth, mDay);
@@ -99,9 +101,9 @@ public class AppointmentActivity extends AppCompatActivity {
                         binding.selectedTime.setText(String.format("%02d:%02d", selectedHour, selectedMinute));
                         if (dateDoseOne != null) {
                             binding.firstDose.setText(getString(R.string.first_dose) + dateDoseOne + " και ώρα " + timeDoseOne);
-                            binding.firstDose.setVisibility(View.VISIBLE);
+                            binding.dateOneLinearLayout.setVisibility(View.VISIBLE);
                             binding.secondDose.setText(getString(R.string.second_dose) + dateDoseTwo + " και ώρα " + timeDoseOne);
-                            binding.secondDose.setVisibility(View.VISIBLE);
+                            binding.dateTwoLinearLayout.setVisibility(View.VISIBLE);
                         }
                     }
                 }, hour, minute, true);//Yes 24 hour time
@@ -120,7 +122,6 @@ public class AppointmentActivity extends AppCompatActivity {
                 public void onDataChange(DataSnapshot dataSnapshot) {
                     if (dataSnapshot.exists()) {
                         for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                            // do something with the individual "issues"
                             hospitalId = snapshot.getKey();
                         }
                         Appointment appointment = new Appointment(binding.nameAppointment.getText().toString(), binding.lastNameAppointment.getText().toString(),
@@ -158,7 +159,7 @@ public class AppointmentActivity extends AppCompatActivity {
         outState.putString("name", binding.nameAppointment.getText().toString());
         outState.putString("last_name", binding.lastNameAppointment.getText().toString());
         outState.putString("telephone", binding.telephoneAppointment.getText().toString());
-        outState.putString("date", dateDoseOne);
+        outState.putString("dateDoseOne", dateDoseOne);
         outState.putString("time", timeDoseOne);
         super.onSaveInstanceState(outState);
     }
@@ -172,17 +173,24 @@ public class AppointmentActivity extends AppCompatActivity {
         binding.telephoneAppointment.setText(savedInstanceState.getString("telephone"));
         dateDoseOne = savedInstanceState.getString("dateDoseOne");
         timeDoseOne = savedInstanceState.getString("time");
-        binding.selectedDate.setText(timeDoseOne);
-        if (timeDoseOne != null) {
-            binding.firstDose.setText(getString(R.string.first_dose) + dateDoseOne + " και ώρα " + timeDoseOne);
-            binding.firstDose.setVisibility(View.VISIBLE);
+        binding.selectedDate.setText(dateDoseOne);
+        Calendar calendar = Calendar.getInstance();
+        SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-YYYY");
+        try {
+            calendar.setTime(sdf.parse(timeDoseOne));
+        } catch (ParseException e) {
+            e.printStackTrace();
         }
         calendar.add(Calendar.DAY_OF_MONTH, DAYS_BETWEEN_DOSES);
         dateDoseTwo = String.format("%02d-%02d-%04d", calendar.get(Calendar.DAY_OF_MONTH), calendar.get(Calendar.MONTH)
                 , calendar.get(Calendar.YEAR));
-        if (timeDoseOne != null) {
+        Log.e("on rotation calendar", dateDoseOne+" "+dateDoseTwo);
+        binding.selectedTime.setText(timeDoseOne);
+        if ((dateDoseOne != null)&&(timeDoseOne != null)) {
+            binding.firstDose.setText(getString(R.string.first_dose) + dateDoseOne + " και ώρα " + timeDoseOne);
+            binding.dateOneLinearLayout.setVisibility(View.VISIBLE);
             binding.secondDose.setText(getString(R.string.second_dose) + dateDoseTwo + " και ώρα " + timeDoseOne);
-            binding.secondDose.setVisibility(View.VISIBLE);
+            binding.dateTwoLinearLayout.setVisibility(View.VISIBLE);
         }
     }
 }
