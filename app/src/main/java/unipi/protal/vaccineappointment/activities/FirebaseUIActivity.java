@@ -1,5 +1,6 @@
 package unipi.protal.vaccineappointment.activities;
 
+import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -21,11 +22,19 @@ import androidx.core.app.ActivityCompat;
 
 import unipi.protal.vaccineappointment.R;
 import unipi.protal.vaccineappointment.databinding.ActivityFirebaseUiBinding;
+import unipi.protal.vaccineappointment.entities.Appointment;
 
 import com.firebase.ui.auth.AuthUI;
 import com.firebase.ui.auth.IdpResponse;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
+
 import java.util.Arrays;
 import java.util.List;
 
@@ -39,12 +48,15 @@ public class FirebaseUIActivity extends AppCompatActivity implements LocationLis
     // Firebase instance variables
     private FirebaseAuth firebaseAuth;
     private FirebaseAuth.AuthStateListener authStateListener;
+    private FirebaseDatabase firebaseDatabase;
+    private DatabaseReference databaseReference;
     private String username;
     private ActivityFirebaseUiBinding binding;
     private LocationManager manager;
     private FirebaseUser user;
-    public static final String VACCINE_POINTS="vaccine_points";
-    public static final String APPOINTMENTS="appointments";
+    public static final String VACCINE_POINTS = "vaccine_points";
+    public static final String APPOINTMENTS = "appointments";
+    public static final String TITLE = "title";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,6 +66,8 @@ public class FirebaseUIActivity extends AppCompatActivity implements LocationLis
         setContentView(view);
         // Initialize Firebase components
         firebaseAuth = FirebaseAuth.getInstance();
+        firebaseDatabase = FirebaseDatabase.getInstance();
+        databaseReference = firebaseDatabase.getReference(VACCINE_POINTS);
         authStateListener = new FirebaseAuth.AuthStateListener() {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
@@ -61,6 +75,7 @@ public class FirebaseUIActivity extends AppCompatActivity implements LocationLis
                 if (user != null) {
                     // User is signed in
                     onSignedInInitialize(user.getDisplayName());
+                    checkUserAppointment();
                 } else {
                     // User is signed out
                     createSignInIntent();
@@ -69,7 +84,7 @@ public class FirebaseUIActivity extends AppCompatActivity implements LocationLis
         };
         manager = (LocationManager) getSystemService(LOCATION_SERVICE);
         binding.findHospital.setOnClickListener(v -> gps(v));
-        if(savedInstanceState==null){
+        if (savedInstanceState == null) {
             createSignInIntent();
         }
 
@@ -109,7 +124,7 @@ public class FirebaseUIActivity extends AppCompatActivity implements LocationLis
                 Toast.makeText(this, response.getError().getMessage(), Toast.LENGTH_SHORT).show();
                 finish();
             }
-        }else if(requestCode==START_MAPS_ACTIVITY && resultCode==RESULT_OK){
+        } else if (requestCode == START_MAPS_ACTIVITY && resultCode == RESULT_OK) {
         }
     }
 
@@ -129,7 +144,7 @@ public class FirebaseUIActivity extends AppCompatActivity implements LocationLis
             signOut();
         }
         return super.onOptionsItemSelected(item);
-        }
+    }
 
 
     @Override
@@ -143,7 +158,7 @@ public class FirebaseUIActivity extends AppCompatActivity implements LocationLis
         super.onRestoreInstanceState(savedInstanceState);
         user = savedInstanceState.getParcelable("f_user");
         binding.userName.setText(user.getDisplayName());
-           }
+    }
 
     @Override
     protected void onResume() {
@@ -176,7 +191,7 @@ public class FirebaseUIActivity extends AppCompatActivity implements LocationLis
                 ActivityCompat.requestPermissions(this, new String[]{ACCESS_FINE_LOCATION}, REQUEST_LOCATION);
             } else {
                 manager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this);
-                startActivityForResult(new Intent(getApplicationContext(), MapsActivity.class),START_MAPS_ACTIVITY);
+                startActivityForResult(new Intent(getApplicationContext(), MapsActivity.class), START_MAPS_ACTIVITY);
             }
         }
     }
@@ -187,7 +202,7 @@ public class FirebaseUIActivity extends AppCompatActivity implements LocationLis
         if (requestCode == REQUEST_LOCATION && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
             if (ActivityCompat.checkSelfPermission(this, ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
                 manager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this);
-                startActivityForResult(new Intent(getApplicationContext(), MapsActivity.class),START_MAPS_ACTIVITY);
+                startActivityForResult(new Intent(getApplicationContext(), MapsActivity.class), START_MAPS_ACTIVITY);
             }
         }
 
@@ -225,5 +240,22 @@ public class FirebaseUIActivity extends AppCompatActivity implements LocationLis
         });
         alertDialog.create();
         alertDialog.show();
+    }
+
+    private void checkUserAppointment() {
+        Query query = databaseReference.orderByChild(APPOINTMENTS);
+        query.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if (dataSnapshot.hasChild(user.getUid())) {
+                    binding.loginMessage.setText("exeis hdh rantexou");
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
     }
 }

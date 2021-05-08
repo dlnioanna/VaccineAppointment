@@ -33,6 +33,7 @@ import unipi.protal.vaccineappointment.R;
 import unipi.protal.vaccineappointment.databinding.ActivityAppointmentBinding;
 
 import static unipi.protal.vaccineappointment.activities.FirebaseUIActivity.APPOINTMENTS;
+import static unipi.protal.vaccineappointment.activities.FirebaseUIActivity.TITLE;
 import static unipi.protal.vaccineappointment.activities.FirebaseUIActivity.VACCINE_POINTS;
 
 public class AppointmentActivity extends AppCompatActivity {
@@ -116,7 +117,7 @@ public class AppointmentActivity extends AppCompatActivity {
 
     private void saveApointment() {
         if (checkFields()) {
-            Query query = databaseReference.orderByChild("title").equalTo(hospital.getTitle());
+            Query query = databaseReference.orderByChild(TITLE).equalTo(hospital.getTitle());
             query.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
