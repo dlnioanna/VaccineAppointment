@@ -85,6 +85,7 @@ public class AppointmentActivity extends AppCompatActivity {
                         }
                     }
                 }, mYear, mMonth, mDay);
+                mDatePicker.getDatePicker().setMinDate(System.currentTimeMillis() - 1000);
                 mDatePicker.setCanceledOnTouchOutside(true);
                 mDatePicker.show();
             }
