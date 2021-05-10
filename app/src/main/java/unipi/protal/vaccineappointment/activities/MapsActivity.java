@@ -12,7 +12,6 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
@@ -39,7 +38,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import unipi.protal.vaccineappointment.entities.Hospital;
-import unipi.protal.vaccineappointment.HospitalAdapter;
+import unipi.protal.vaccineappointment.utils.HospitalAdapter;
 import unipi.protal.vaccineappointment.R;
 import unipi.protal.vaccineappointment.databinding.ActivityMapsBinding;
 

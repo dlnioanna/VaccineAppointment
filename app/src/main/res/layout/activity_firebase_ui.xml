@@ -22,6 +22,7 @@
         <android.widget.Button
             android:id="@+id/find_hospital"
             style="@style/addAppointmentButtonLayout"
+            android:visibility="invisible"
             android:layout_marginBottom="@dimen/extra_large_margin"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
@@ -32,6 +33,7 @@
         <TextView
             android:id="@+id/login_message"
             style="@style/loginMessageLayout"
+            android:visibility="invisible"
             app:layout_constraintBottom_toTopOf="@+id/find_hospital"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"

@@ -1,4 +1,4 @@
-package unipi.protal.vaccineappointment;
+package unipi.protal.vaccineappointment.utils;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.List;
 
+import unipi.protal.vaccineappointment.R;
 import unipi.protal.vaccineappointment.entities.Hospital;
 
 public class HospitalAdapter extends RecyclerView.Adapter<HospitalAdapter.HospitalViewHolder> {
