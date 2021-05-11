@@ -1,6 +1,5 @@
 package unipi.protal.vaccineappointment.activities;
 
-import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -22,17 +21,17 @@ import androidx.core.app.ActivityCompat;
 
 import unipi.protal.vaccineappointment.R;
 import unipi.protal.vaccineappointment.databinding.ActivityFirebaseUiBinding;
-import unipi.protal.vaccineappointment.entities.Appointment;
+import unipi.protal.vaccineappointment.entities.Hospital;
 
 import com.firebase.ui.auth.AuthUI;
 import com.firebase.ui.auth.IdpResponse;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.Arrays;
@@ -49,13 +48,17 @@ public class FirebaseUIActivity extends AppCompatActivity implements LocationLis
     private FirebaseAuth firebaseAuth;
     private FirebaseAuth.AuthStateListener authStateListener;
     private FirebaseDatabase firebaseDatabase;
-    private DatabaseReference databaseReference;
+    private DatabaseReference vaccinePointsDatabaseReference;
+    private DatabaseReference claimsDatabaseReference;
     private String username;
     private ActivityFirebaseUiBinding binding;
     private LocationManager manager;
     private FirebaseUser user;
     public static final String VACCINE_POINTS = "vaccine_points";
     public static final String APPOINTMENTS = "appointments";
+    public static final String CLAIMS = "claims";
+    public static final String DOCTOR = "doctor";
+    public static final String PATIENT = "patient";
     public static final String TITLE = "title";
 
     @Override
@@ -67,7 +70,8 @@ public class FirebaseUIActivity extends AppCompatActivity implements LocationLis
         // Initialize Firebase components
         firebaseAuth = FirebaseAuth.getInstance();
         firebaseDatabase = FirebaseDatabase.getInstance();
-        databaseReference = firebaseDatabase.getReference(VACCINE_POINTS);
+        vaccinePointsDatabaseReference = firebaseDatabase.getReference(VACCINE_POINTS);
+        claimsDatabaseReference = firebaseDatabase.getReference(CLAIMS);
         authStateListener = new FirebaseAuth.AuthStateListener() {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
@@ -116,6 +120,7 @@ public class FirebaseUIActivity extends AppCompatActivity implements LocationLis
                 // Successfully signed in
                 FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
                 binding.userName.setText(user.getDisplayName());
+                roleCheck(user);
             } else {
                 // Sign in failed. If response is null the user canceled the
                 // sign-in flow using the back button. Otherwise show
@@ -176,6 +181,8 @@ public class FirebaseUIActivity extends AppCompatActivity implements LocationLis
 
     private void onSignedInInitialize(String name) {
         username = name;
+        binding.loginMessage.setVisibility(View.VISIBLE);
+        binding.findHospital.setVisibility(View.VISIBLE);
     }
 
     public void signOut() {
@@ -242,5 +249,38 @@ public class FirebaseUIActivity extends AppCompatActivity implements LocationLis
         alertDialog.show();
     }
 
+    private void roleCheck(FirebaseUser firebaseUser) {
+//        claimsDatabaseReference.child(firebaseUser.getUid()).child(DOCTOR).setValue(true);
+//        claimsDatabaseReference.child(firebaseUser.getUid()).child(PATIENT).setValue(false);
+        DatabaseReference roleDoctor = claimsDatabaseReference.child(firebaseUser.getUid()).child(DOCTOR);
+        roleDoctor.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                    Boolean doc = dataSnapshot.getValue(boolean.class);
+                  //  String pat = snapshot.getValue(String.class);
+                    Log.e("rolesCheck snapshot", firebaseUser.getUid()+" is doctor " +doc);
+            }
 
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+
+        });
+        DatabaseReference rolePatient = claimsDatabaseReference.child(firebaseUser.getUid()).child(PATIENT);
+        rolePatient.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                Boolean pat = dataSnapshot.getValue(boolean.class);
+                Log.e("rolesCheck snapshot", firebaseUser.getUid()+" is patient "+pat);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+
+        });
+
+    }
 }
