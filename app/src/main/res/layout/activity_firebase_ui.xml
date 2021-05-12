@@ -8,6 +8,18 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         tools:context=".activities.FirebaseUIActivity">
+
+        <ImageView
+            android:id="@+id/flagImage"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@drawable/ic_banner_virus"
+            android:scaleType="fitXY"
+            android:alpha="0.2"
+            app:layout_constraintBottom_toBottomOf="@+id/find_hospital"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
         <TextView
             android:id="@+id/user_name"
             style="@style/userNameStyle"

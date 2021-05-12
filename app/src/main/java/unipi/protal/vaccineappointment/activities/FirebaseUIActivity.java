@@ -69,6 +69,7 @@ public class FirebaseUIActivity extends AppCompatActivity implements LocationLis
         View view = binding.getRoot();
         setContentView(view);
         // Initialize Firebase components
+//        binding.constraintFirebaseUi.setBackgroundResource(R.drawable.ic_covid19);
         firebaseAuth = FirebaseAuth.getInstance();
         firebaseDatabase = FirebaseDatabase.getInstance();
         vaccinePointsDatabaseReference = firebaseDatabase.getReference(VACCINE_POINTS);
