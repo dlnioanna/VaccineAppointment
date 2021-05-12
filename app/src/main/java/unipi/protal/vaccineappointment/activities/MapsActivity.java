@@ -12,6 +12,7 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
@@ -170,6 +171,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     @Override
     public void onLocationChanged(@NonNull Location location) {
         currentLocation = location;
+        Log.e("onLocationChanged", location.getLatitude()+" "+location.getLongitude());
         if (hospitalsByDistance == null) {
             calculateDistance(currentLocation);
             binding.firebaseProgressBar.setVisibility(View.GONE);
@@ -183,7 +185,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         }
         circleOptions = new CircleOptions().center(position).radius(30).strokeColor(Color.BLUE).fillColor(Color.BLUE);
         circle = mMap.addCircle(circleOptions);
-        CameraPosition target = CameraPosition.builder().target(position).zoom(14).build();
+        CameraPosition target = CameraPosition.builder().target(position).build();
         mMap.moveCamera(CameraUpdateFactory.newCameraPosition(target));
 
 

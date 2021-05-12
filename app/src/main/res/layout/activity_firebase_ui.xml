@@ -9,27 +9,28 @@
         android:layout_height="match_parent"
         tools:context=".activities.FirebaseUIActivity">
 
+
         <ImageView
             android:id="@+id/flagImage"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@drawable/ic_banner_virus"
+            android:alpha="0.25"
+            android:background="@drawable/ic_background_image"
             android:scaleType="fitXY"
-            android:alpha="0.2"
             app:layout_constraintBottom_toBottomOf="@+id/find_hospital"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.0" />
+
         <TextView
             android:id="@+id/user_name"
             style="@style/userNameStyle"
-            app:layout_constraintBottom_toTopOf="@+id/login_message"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_chainStyle="spread_inside"
             tools:text="User name" />
-
 
         <android.widget.Button
             android:id="@+id/find_hospital"
@@ -38,7 +39,6 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/login_message"
             tools:text="Αναζήτηση εμβολιαστικού κέντρου" />
 
         <TextView
@@ -47,7 +47,8 @@
             app:layout_constraintBottom_toTopOf="@+id/find_hospital"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/user_name" />
+            app:layout_constraintTop_toBottomOf="@+id/user_name"
+            app:layout_constraintVertical_bias="0.451" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

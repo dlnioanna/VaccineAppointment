@@ -16,7 +16,7 @@
         <item name="android:layout_height">wrap_content</item>
         <item name="android:textSize">@dimen/welcome_text_size</item>
         <item name="android:textAllCaps">false</item>
-        <item name="android:textColor">@color/black</item>
+        <item name="android:textColor">@color/colorPrimary</item>
         <item name="android:gravity">center</item>
         <item name="android:layout_marginTop">@dimen/user_name_text_view_top_margin</item>
         <item name="android:layout_marginBottom">@dimen/user_name_text_view_start_end_margin</item>
@@ -51,7 +51,7 @@
         <item name="android:gravity">center_horizontal|center_vertical</item>
         <item name="android:textSize">@dimen/message_text_size</item>
         <item name="android:textAllCaps">false</item>
-        <item name="android:textColor">@color/grey</item>
+        <item name="android:textColor">@color/colorPrimary</item>
         <item name="android:layout_marginEnd">@dimen/login_message_margin</item>
         <item name="android:layout_marginStart">@dimen/login_message_margin</item>
     </style>

@@ -1,6 +1,7 @@
 <resources>
     <string name="app_name">Εμβολιασμός Covid-19</string>
     <string name="sign_out_text">Αποσύνδεση</string>
+    <string name="role_asign">Ρόλοι χρηστών</string>
     <string name="search_hospital">Αναζήτηση εμβολιαστικού κέντρου</string>
     <string name="shοw_hospital_list">Εμφάνιση εμβολιαστικών κέντρων</string>
     <string name="login_error">Ανεπιτυχής προσπάθεια σύνδεσης. Προσπαθήστε ξάνα.</string>

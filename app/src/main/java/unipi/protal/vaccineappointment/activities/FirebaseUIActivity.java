@@ -18,15 +18,12 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
 
 import unipi.protal.vaccineappointment.R;
 import unipi.protal.vaccineappointment.databinding.ActivityFirebaseUiBinding;
-import unipi.protal.vaccineappointment.entities.Hospital;
 
 import com.firebase.ui.auth.AuthUI;
 import com.firebase.ui.auth.IdpResponse;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -51,15 +48,14 @@ public class FirebaseUIActivity extends AppCompatActivity implements LocationLis
     private FirebaseDatabase firebaseDatabase;
     private DatabaseReference vaccinePointsDatabaseReference;
     private DatabaseReference claimsDatabaseReference;
-    private String username;
     private ActivityFirebaseUiBinding binding;
     private LocationManager manager;
     private FirebaseUser user;
-    private Boolean doctor, patient;
     public static final String VACCINE_POINTS = "vaccine_points";
     public static final String APPOINTMENTS = "appointments";
     public static final String CLAIMS = "claims";
     public static final String DOCTOR = "doctor";
+    public static final String PATIENT = "patient";
     public static final String TITLE = "title";
 
     @Override
@@ -69,7 +65,7 @@ public class FirebaseUIActivity extends AppCompatActivity implements LocationLis
         View view = binding.getRoot();
         setContentView(view);
         // Initialize Firebase components
-//        binding.constraintFirebaseUi.setBackgroundResource(R.drawable.ic_covid19);
+//       binding.constraintFirebaseUi.setBackgroundResource(R.drawable.ic_background_image);
         firebaseAuth = FirebaseAuth.getInstance();
         firebaseDatabase = FirebaseDatabase.getInstance();
         vaccinePointsDatabaseReference = firebaseDatabase.getReference(VACCINE_POINTS);
@@ -80,7 +76,9 @@ public class FirebaseUIActivity extends AppCompatActivity implements LocationLis
                 user = firebaseAuth.getCurrentUser();
                 if (user != null) {
                     // User is signed in
-//                    onSignedInInitialize(user.getDisplayName());
+                    user = FirebaseAuth.getInstance().getCurrentUser();
+                    binding.userName.setText(user.getDisplayName());
+                    roleCheck(user);
                 } else {
                     // User is signed out
                     createSignInIntent();
@@ -119,7 +117,7 @@ public class FirebaseUIActivity extends AppCompatActivity implements LocationLis
             IdpResponse response = IdpResponse.fromResultIntent(data);
             if (resultCode == RESULT_OK) {
                 // Successfully signed in
-                FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+                user = FirebaseAuth.getInstance().getCurrentUser();
                 binding.userName.setText(user.getDisplayName());
                 roleCheck(user);
             } else {
@@ -148,6 +146,8 @@ public class FirebaseUIActivity extends AppCompatActivity implements LocationLis
         int id = item.getItemId();
         if (id == R.id.action_sign_out) {
             signOut();
+        }else if (id == R.id.action_role_asign) {
+
         }
         return super.onOptionsItemSelected(item);
     }
@@ -164,6 +164,7 @@ public class FirebaseUIActivity extends AppCompatActivity implements LocationLis
         super.onRestoreInstanceState(savedInstanceState);
         user = savedInstanceState.getParcelable("f_user");
         binding.userName.setText(user.getDisplayName());
+        roleCheck(user);
     }
 
     @Override
@@ -180,18 +181,10 @@ public class FirebaseUIActivity extends AppCompatActivity implements LocationLis
         }
     }
 
-//    private void onSignedInInitialize(String name) {
-//        username = name;
-//       if(roleCheck(user)){
-//
-//       }
-//    }
-
     public void signOut() {
         AuthUI.getInstance()
                 .signOut(this);
     }
-
 
 
     @Override
@@ -203,7 +196,6 @@ public class FirebaseUIActivity extends AppCompatActivity implements LocationLis
                 startActivityForResult(new Intent(getApplicationContext(), MapsActivity.class), START_MAPS_ACTIVITY);
             }
         }
-
     }
 
     @Override
@@ -241,16 +233,12 @@ public class FirebaseUIActivity extends AppCompatActivity implements LocationLis
     }
 
     private void roleCheck(FirebaseUser firebaseUser) {
-//        claimsDatabaseReference.child(firebaseUser.getUid()).child(DOCTOR).setValue(true);
-//        claimsDatabaseReference.child(firebaseUser.getUid()).child(PATIENT).setValue(false);
-
         DatabaseReference roleDoctor = claimsDatabaseReference.child(firebaseUser.getUid()).child(DOCTOR);
         roleDoctor.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 if(dataSnapshot.exists()){
                     boolean isDoctor = dataSnapshot.getValue(boolean.class);
-                    Log.e("IS DOCTOR",""+isDoctor);
                     if(isDoctor){
                         binding.loginMessage.setText(getString(R.string.doctor_login_message));
                         binding.findHospital.setText(getString(R.string.shοw_hospital_list));
@@ -261,6 +249,32 @@ public class FirebaseUIActivity extends AppCompatActivity implements LocationLis
                         binding.findHospital.setOnClickListener(v -> gps(v));
                     }
                 }else {
+                    binding.loginMessage.setText(getString(R.string.user_login_message));
+                    binding.findHospital.setText(getString(R.string.search_hospital));
+                    binding.findHospital.setOnClickListener(v -> gps(v));
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+            }
+
+        });
+
+        DatabaseReference rolePatient = claimsDatabaseReference.child(firebaseUser.getUid()).child(PATIENT);
+        rolePatient.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if(dataSnapshot.exists()){
+                    boolean isPatient = dataSnapshot.getValue(boolean.class);
+                    if(isPatient) {
+                        binding.loginMessage.setText(getString(R.string.user_login_message));
+                        binding.findHospital.setText(getString(R.string.search_hospital));
+                        binding.findHospital.setOnClickListener(v -> gps(v));
+                    }
+                }else {
+                    claimsDatabaseReference.child(firebaseUser.getUid()).child(PATIENT).setValue(true);
+                    claimsDatabaseReference.child(firebaseUser.getUid()).child(DOCTOR).setValue(false);
                     binding.loginMessage.setText(getString(R.string.user_login_message));
                     binding.findHospital.setText(getString(R.string.search_hospital));
                     binding.findHospital.setOnClickListener(v -> gps(v));
