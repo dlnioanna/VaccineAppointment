@@ -31,7 +31,6 @@
         <item name="android:textSize">@dimen/button_text_size</item>
         <item name="android:textAllCaps">false</item>
         <item name="android:textColor">@color/white</item>
-        <item name="android:text">@string/search_hospital</item>
         <item name="android:background">@drawable/map_buttons</item>
     </style>
 
@@ -53,7 +52,6 @@
         <item name="android:textSize">@dimen/message_text_size</item>
         <item name="android:textAllCaps">false</item>
         <item name="android:textColor">@color/grey</item>
-        <item name="android:text">@string/login_message</item>
         <item name="android:layout_marginEnd">@dimen/login_message_margin</item>
         <item name="android:layout_marginStart">@dimen/login_message_margin</item>
     </style>
@@ -62,6 +60,28 @@
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:text">@string/list_of_hospitals_title</item>
+        <item name="android:gravity">center</item>
+        <item name="android:textColor">@color/colorPrimaryDark</item>
+        <item name="android:textSize">@dimen/hospital_list_title_size</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textAlignment">center</item>
+        <item name="android:layout_margin">@dimen/medium_margin</item>
+    </style>
+    <style name="hospital_list_recycler_title">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:text">@string/list_of_recycler_hospitals_title</item>
+        <item name="android:gravity">center</item>
+        <item name="android:textColor">@color/colorPrimaryDark</item>
+        <item name="android:textSize">@dimen/hospital_list_title_size</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textAlignment">center</item>
+        <item name="android:layout_margin">@dimen/medium_margin</item>
+    </style>
+    <style name="list_of_appointments_title">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:text">@string/list_of_appointments_title</item>
         <item name="android:gravity">center</item>
         <item name="android:textColor">@color/colorPrimaryDark</item>
         <item name="android:textSize">@dimen/hospital_list_title_size</item>
@@ -92,6 +112,24 @@
     </style>
 
     <style name="hospital_description">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_gravity">center</item>
+        <item name="android:textColor">#838080</item>
+        <item name="android:justificationMode">inter_word</item>
+        <item name="android:textSize">@dimen/hospital_description_size</item>
+    </style>
+
+    <style name="patient_name">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:gravity">center</item>
+        <item name="android:textColor">#5E5858</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textSize">@dimen/hospital_title_size</item>
+    </style>
+
+    <style name="appointment_details">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_gravity">center</item>
@@ -184,5 +222,13 @@
         <item name="android:layout_margin">@dimen/medium_margin</item>
         <item name="android:layout_marginBottom">@dimen/extra_large_margin</item>
         <item name="android:background">@drawable/map_buttons</item>
+    </style>
+
+    <style name="recycler_view_style">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_margin">@dimen/medium_margin</item>
+        <item name="android:layout_marginBottom">@dimen/extra_extra_large_margin</item>
+        <item name="android:paddingBottom">@dimen/extra_extra_large_margin</item>
     </style>
 </resources>

@@ -54,11 +54,11 @@ public class FirebaseUIActivity extends AppCompatActivity implements LocationLis
     private ActivityFirebaseUiBinding binding;
     private LocationManager manager;
     private FirebaseUser user;
+    private Boolean doctor, patient;
     public static final String VACCINE_POINTS = "vaccine_points";
     public static final String APPOINTMENTS = "appointments";
     public static final String CLAIMS = "claims";
     public static final String DOCTOR = "doctor";
-    public static final String PATIENT = "patient";
     public static final String TITLE = "title";
 
     @Override
@@ -78,7 +78,7 @@ public class FirebaseUIActivity extends AppCompatActivity implements LocationLis
                 user = firebaseAuth.getCurrentUser();
                 if (user != null) {
                     // User is signed in
-                    onSignedInInitialize(user.getDisplayName());
+//                    onSignedInInitialize(user.getDisplayName());
                 } else {
                     // User is signed out
                     createSignInIntent();
@@ -86,7 +86,6 @@ public class FirebaseUIActivity extends AppCompatActivity implements LocationLis
             }
         };
         manager = (LocationManager) getSystemService(LOCATION_SERVICE);
-        binding.findHospital.setOnClickListener(v -> gps(v));
         if (savedInstanceState == null) {
             createSignInIntent();
         }
@@ -179,29 +178,19 @@ public class FirebaseUIActivity extends AppCompatActivity implements LocationLis
         }
     }
 
-    private void onSignedInInitialize(String name) {
-        username = name;
-        binding.loginMessage.setVisibility(View.VISIBLE);
-        binding.findHospital.setVisibility(View.VISIBLE);
-    }
+//    private void onSignedInInitialize(String name) {
+//        username = name;
+//       if(roleCheck(user)){
+//
+//       }
+//    }
 
     public void signOut() {
         AuthUI.getInstance()
                 .signOut(this);
     }
 
-    private void gps(View view) {
-        if (!manager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
-            showGPSDiabledDialog();
-        } else {
-            if (ActivityCompat.checkSelfPermission(this, ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                ActivityCompat.requestPermissions(this, new String[]{ACCESS_FINE_LOCATION}, REQUEST_LOCATION);
-            } else {
-                manager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this);
-                startActivityForResult(new Intent(getApplicationContext(), MapsActivity.class), START_MAPS_ACTIVITY);
-            }
-        }
-    }
+
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
@@ -252,13 +241,29 @@ public class FirebaseUIActivity extends AppCompatActivity implements LocationLis
     private void roleCheck(FirebaseUser firebaseUser) {
 //        claimsDatabaseReference.child(firebaseUser.getUid()).child(DOCTOR).setValue(true);
 //        claimsDatabaseReference.child(firebaseUser.getUid()).child(PATIENT).setValue(false);
+
         DatabaseReference roleDoctor = claimsDatabaseReference.child(firebaseUser.getUid()).child(DOCTOR);
         roleDoctor.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                    Boolean doc = dataSnapshot.getValue(boolean.class);
-                  //  String pat = snapshot.getValue(String.class);
-                    Log.e("rolesCheck snapshot", firebaseUser.getUid()+" is doctor " +doc);
+                if(dataSnapshot.exists()){
+                    boolean isDoctor = dataSnapshot.getValue(boolean.class);
+                    Log.e("IS DOCTOR",""+isDoctor);
+                    if(isDoctor){
+                        binding.loginMessage.setText(getString(R.string.doctor_login_message));
+                        binding.findHospital.setText(getString(R.string.shοw_hospital_list));
+                        binding.findHospital.setOnClickListener(v -> showHospitals(v));
+                    } else {
+                        binding.loginMessage.setText(getString(R.string.user_login_message));
+                        binding.findHospital.setText(getString(R.string.search_hospital));
+                        binding.findHospital.setOnClickListener(v -> gps(v));
+                    }
+                }else {
+                    binding.loginMessage.setText(getString(R.string.user_login_message));
+                    binding.findHospital.setText(getString(R.string.search_hospital));
+                    binding.findHospital.setOnClickListener(v -> gps(v));
+                }
+
             }
 
             @Override
@@ -267,20 +272,22 @@ public class FirebaseUIActivity extends AppCompatActivity implements LocationLis
             }
 
         });
-        DatabaseReference rolePatient = claimsDatabaseReference.child(firebaseUser.getUid()).child(PATIENT);
-        rolePatient.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                Boolean pat = dataSnapshot.getValue(boolean.class);
-                Log.e("rolesCheck snapshot", firebaseUser.getUid()+" is patient "+pat);
+    }
+
+    private void gps(View view) {
+        if (!manager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+            showGPSDiabledDialog();
+        } else {
+            if (ActivityCompat.checkSelfPermission(this, ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(this, new String[]{ACCESS_FINE_LOCATION}, REQUEST_LOCATION);
+            } else {
+                manager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this);
+                startActivityForResult(new Intent(getApplicationContext(), MapsActivity.class), START_MAPS_ACTIVITY);
             }
+        }
+    }
 
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-
-            }
-
-        });
-
+    private void showHospitals(View view) {
+                startActivity(new Intent(getApplicationContext(), HospitalListActivity.class));
     }
 }
