@@ -29,7 +29,7 @@ import static unipi.protal.vaccineappointment.activities.FirebaseUIActivity.TITL
 import static unipi.protal.vaccineappointment.activities.FirebaseUIActivity.VACCINE_POINTS;
 
 
-public class AppointmentListActivity extends AppCompatActivity implements AppointmentAdapter.ListItemClickListener{
+public class AppointmentListActivity extends AppCompatActivity{
     private Appointment appointment;
     private Hospital hospital;
     private String appointmentId;
@@ -92,14 +92,9 @@ public class AppointmentListActivity extends AppCompatActivity implements Appoin
     }
 
     private void createAdapter() {
-        appointmentAdapter = new AppointmentAdapter(appointmentList, this);
+        appointmentAdapter = new AppointmentAdapter(appointmentList);
         binding.appointmentRecyclerView.setAdapter(appointmentAdapter);
         binding.firebaseProgressBar.setVisibility(View.GONE);
     }
 
-    @Override
-    public void onListItemClick(int clickedItemIndex) {
-        Toast.makeText(getApplicationContext(), "item clicked"+clickedItemIndex, Toast.LENGTH_SHORT).show();
-
-    }
 }

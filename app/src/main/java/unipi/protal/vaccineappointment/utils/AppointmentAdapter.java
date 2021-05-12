@@ -5,37 +5,28 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
-
 import java.util.List;
-
 import unipi.protal.vaccineappointment.R;
 import unipi.protal.vaccineappointment.entities.Appointment;
-import unipi.protal.vaccineappointment.entities.Hospital;
+
 
 public class AppointmentAdapter extends RecyclerView.Adapter<AppointmentAdapter.AppointmentViewHolder> {
     private List<Appointment> appointmentList;
-    final private AppointmentAdapter.ListItemClickListener mOnClickListener;
-    private int numOfHospitals;
+    private int numOfAppointments;
     private Context context;
 
-    public interface ListItemClickListener {
-        void onListItemClick(int clickedItemIndex);
-    }
-
-    public AppointmentAdapter(List<Appointment> appointments, AppointmentAdapter.ListItemClickListener listener) {
-        mOnClickListener = listener;
+    public AppointmentAdapter(List<Appointment> appointments) {
         appointmentList=appointments;
-        numOfHospitals = appointmentList.size();
+        numOfAppointments = appointmentList.size();
     }
 
     @NonNull
     @Override
     public AppointmentAdapter.AppointmentViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         LayoutInflater inflater = LayoutInflater.from(parent.getContext());
-        View view = inflater.inflate(R.layout.hospital_view, parent, false);
+        View view = inflater.inflate(R.layout.appointment_view, parent, false);
         AppointmentAdapter.AppointmentViewHolder viewHolder = new AppointmentAdapter.AppointmentViewHolder(view);
         context = parent.getContext();
         return viewHolder;
@@ -43,11 +34,13 @@ public class AppointmentAdapter extends RecyclerView.Adapter<AppointmentAdapter.
 
     @Override
     public void onBindViewHolder(@NonNull AppointmentAdapter.AppointmentViewHolder holder, int position) {
-        holder.hospitalTitle.setText(appointmentList.get(position).getLastName());
-        holder.hospitalDescription.setText(appointmentList.get(position).getFirstDose());
+        String first = context.getResources().getString(R.string.first_dose);
+        String second = context.getResources().getString(R.string.second_dose);
+        holder.patientName.setText(appointmentList.get(position).getLastName()+" "+appointmentList.get(position).getName());
+        holder.appointmentFirstDose.setText(first +" "+appointmentList.get(position).getFirstDose()+" "+appointmentList.get(position).getTime());
+        holder.appointmentSecondDose.setText(second +" "+appointmentList.get(position).getSecondDose()+" "+appointmentList.get(position).getTime());
         int backgroundColorForViewHolder = ColorUtils.getViewHolderBackgroundColor(context,position);
         holder.itemView.setBackgroundColor(backgroundColorForViewHolder);
-
     }
 
     @Override
@@ -56,22 +49,17 @@ public class AppointmentAdapter extends RecyclerView.Adapter<AppointmentAdapter.
     }
 
 
-    class AppointmentViewHolder extends RecyclerView.ViewHolder
-            implements View.OnClickListener {
-        TextView hospitalTitle, hospitalDescription;
+    class AppointmentViewHolder extends RecyclerView.ViewHolder {
+        TextView patientName, appointmentFirstDose,appointmentSecondDose;
 
         public AppointmentViewHolder(View itemView) {
             super(itemView);
-            hospitalTitle = (TextView) itemView.findViewById(R.id.hospital_title);
-            hospitalDescription = (TextView) itemView.findViewById(R.id.hospital_description);
-            itemView.setOnClickListener(this);
+            patientName = (TextView) itemView.findViewById(R.id.patient_name);
+            appointmentFirstDose = (TextView) itemView.findViewById(R.id.appointment_first_dose);
+            appointmentSecondDose = (TextView) itemView.findViewById(R.id.appointment_second_dose);
         }
 
-        @Override
-        public void onClick(View v) {
-            int clickedPosition = getAdapterPosition();
-            mOnClickListener.onListItemClick(clickedPosition);
-        }
+
     }
 }
 

@@ -4,10 +4,10 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/constraint_firebase_ui"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         tools:context=".activities.FirebaseUIActivity">
-
         <TextView
             android:id="@+id/user_name"
             style="@style/userNameStyle"

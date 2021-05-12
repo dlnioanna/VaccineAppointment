@@ -7,6 +7,10 @@
         style="@style/patient_name" />
 
     <TextView
-        android:id="@+id/appointment_details"
+        android:id="@+id/appointment_first_dose"
+        style="@style/appointment_details"/>
+
+    <TextView
+        android:id="@+id/appointment_second_dose"
         style="@style/appointment_details"/>
 </LinearLayout>
