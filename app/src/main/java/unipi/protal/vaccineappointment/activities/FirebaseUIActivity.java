@@ -41,7 +41,6 @@ public class FirebaseUIActivity extends AppCompatActivity implements LocationLis
     private static final int RC_SIGN_IN = 123;
     public static final int REQUEST_LOCATION = 1000;
     public static final int START_MAPS_ACTIVITY = 2000;
-    private static final String TAG = "MainActivity";
     // Firebase instance variables
     private FirebaseAuth firebaseAuth;
     private FirebaseAuth.AuthStateListener authStateListener;
@@ -65,7 +64,6 @@ public class FirebaseUIActivity extends AppCompatActivity implements LocationLis
         View view = binding.getRoot();
         setContentView(view);
         // Initialize Firebase components
-//       binding.constraintFirebaseUi.setBackgroundResource(R.drawable.ic_background_image);
         firebaseAuth = FirebaseAuth.getInstance();
         firebaseDatabase = FirebaseDatabase.getInstance();
         vaccinePointsDatabaseReference = firebaseDatabase.getReference(VACCINE_POINTS);
@@ -86,6 +84,7 @@ public class FirebaseUIActivity extends AppCompatActivity implements LocationLis
             }
         };
         manager = (LocationManager) getSystemService(LOCATION_SERVICE);
+        // prevent from re-creating sign in ui when rotating screen or leaving screen
         if (savedInstanceState == null) {
             createSignInIntent();
         }
@@ -109,7 +108,6 @@ public class FirebaseUIActivity extends AppCompatActivity implements LocationLis
                 RC_SIGN_IN);
     }
 
-    // [START auth_fui_result]
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -123,7 +121,6 @@ public class FirebaseUIActivity extends AppCompatActivity implements LocationLis
             } else {
                 // Sign in failed. If response is null the user canceled the
                 // sign-in flow using the back button. Otherwise show
-                // response.getError().getMessage().
                 Toast.makeText(this, response.getError().getMessage(), Toast.LENGTH_SHORT).show();
                 finish();
             }
@@ -132,6 +129,8 @@ public class FirebaseUIActivity extends AppCompatActivity implements LocationLis
         }
     }
 
+
+    // create menu on the top left corner to sign out
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.main, menu);
@@ -151,12 +150,14 @@ public class FirebaseUIActivity extends AppCompatActivity implements LocationLis
     }
 
 
+    // save data to prevent losing them on screen rotation when app is running but not shown
     @Override
     protected void onSaveInstanceState(@NonNull Bundle outState) {
         outState.putParcelable("f_user", user);
         super.onSaveInstanceState(outState);
     }
 
+    // restore data that have been saved on onSaveInstanceState
     @Override
     protected void onRestoreInstanceState(@NonNull Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
@@ -179,6 +180,7 @@ public class FirebaseUIActivity extends AppCompatActivity implements LocationLis
         }
     }
 
+    // method to sign out using AuthUI
     public void signOut() {
         AuthUI.getInstance()
                 .signOut(this);
@@ -230,7 +232,15 @@ public class FirebaseUIActivity extends AppCompatActivity implements LocationLis
         alertDialog.show();
     }
 
+
+    /*
+    Method used to check firebase realtime database about wich role has the current user. If the user
+    has never signed in before he is added to the database as patient. If the user's uid is recorded in
+    database as doctor he can check all the appointments for all the hospital. Patients can check for
+    the nearest hospital and add appointmet
+     */
     private void roleCheck(FirebaseUser firebaseUser) {
+        // if the user is a doctor he can go to HospitalListActivity
         DatabaseReference roleDoctor = claimsDatabaseReference.child(firebaseUser.getUid()).child(DOCTOR);
         roleDoctor.addValueEventListener(new ValueEventListener() {
             @Override
@@ -259,6 +269,7 @@ public class FirebaseUIActivity extends AppCompatActivity implements LocationLis
 
         });
 
+        // if the user is a patient or if the user has never signed in before he can go to MapsActivity
         DatabaseReference rolePatient = claimsDatabaseReference.child(firebaseUser.getUid()).child(PATIENT);
         rolePatient.addValueEventListener(new ValueEventListener() {
             @Override
@@ -287,6 +298,10 @@ public class FirebaseUIActivity extends AppCompatActivity implements LocationLis
 
         });
     }
+
+    /*
+    Method used to check if the gps is enabled, if access to location is permited and opens Maps activity
+     */
 
     private void gps(View view) {
         if (!manager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
