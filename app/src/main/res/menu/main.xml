@@ -5,8 +5,4 @@
         android:id="@+id/action_sign_out"
         android:title="@string/sign_out_text"
         app:showAsAction="never" />
-    <item
-        android:id="@+id/action_role_asign"
-        android:title="@string/role_asign"
-        app:showAsAction="never" />
 </menu>

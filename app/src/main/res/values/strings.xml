@@ -15,7 +15,6 @@
     <string name="list_of_hospitals_title">Πλησιέστερα εμβολιαστικά κέντρα</string>
     <string name="list_of_recycler_hospitals_title">Εμβολιαστικά κέντρα</string>
     <string name="list_of_appointments_title">Ραντεβού</string>
-    <string name="list_of_user_roles">Χρήστες</string>
     <string name="name_title">Όνομα</string>
     <string name="last_name_title">Επίθετο</string>
     <string name="telephone_title">Τηλέφωνο</string>
@@ -31,5 +30,4 @@
     <string name="gps_no">ΟΧΙ, ΕΥΧΑΡΙΣΤΩ</string>
     <string name="save_appointment_error_message">Παρακαλώ συμπληρώστε όλα τα πεδία</string>
     <string name="save_appointment_message">Το ραντεβού σας έχει καταχωρηθεί</string>
-    <string name="doctor_switch">Γιατρός</string>
 </resources>

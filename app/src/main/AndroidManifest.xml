@@ -19,7 +19,6 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.VaccineAppointment">
-        <activity android:name=".activities.RolesActivity"/>
         <activity android:name=".activities.HospitalListActivity" />
         <activity android:name=".activities.AppointmentActivity" />
         <activity android:name=".activities.AppointmentListActivity" />
