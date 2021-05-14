@@ -55,6 +55,8 @@ public class FirebaseUIActivity extends AppCompatActivity implements LocationLis
     public static final String APPOINTMENTS = "appointments";
     public static final String CLAIMS = "claims";
     public static final String DOCTOR = "doctor";
+    public static final String EMAIL = "email";
+    public static final String USER_NAME = "display_name";
     public static final String PATIENT = "patient";
     public static final String TITLE = "title";
 
@@ -147,7 +149,7 @@ public class FirebaseUIActivity extends AppCompatActivity implements LocationLis
         if (id == R.id.action_sign_out) {
             signOut();
         }else if (id == R.id.action_role_asign) {
-
+            startActivity(new Intent(getApplicationContext(), RolesActivity.class));
         }
         return super.onOptionsItemSelected(item);
     }
@@ -275,6 +277,8 @@ public class FirebaseUIActivity extends AppCompatActivity implements LocationLis
                 }else {
                     claimsDatabaseReference.child(firebaseUser.getUid()).child(PATIENT).setValue(true);
                     claimsDatabaseReference.child(firebaseUser.getUid()).child(DOCTOR).setValue(false);
+                    claimsDatabaseReference.child(firebaseUser.getUid()).child(EMAIL).setValue(firebaseUser.getEmail());
+                    claimsDatabaseReference.child(firebaseUser.getUid()).child(USER_NAME).setValue(firebaseUser.getDisplayName());
                     binding.loginMessage.setText(getString(R.string.user_login_message));
                     binding.findHospital.setText(getString(R.string.search_hospital));
                     binding.findHospital.setOnClickListener(v -> gps(v));

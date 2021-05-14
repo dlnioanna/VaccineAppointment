@@ -185,7 +185,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         }
         circleOptions = new CircleOptions().center(position).radius(30).strokeColor(Color.BLUE).fillColor(Color.BLUE);
         circle = mMap.addCircle(circleOptions);
-        CameraPosition target = CameraPosition.builder().target(position).build();
+        CameraPosition target = CameraPosition.builder().target(position).zoom(14).build();
         mMap.moveCamera(CameraUpdateFactory.newCameraPosition(target));
 
 
