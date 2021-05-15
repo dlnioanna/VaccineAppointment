@@ -40,7 +40,7 @@ import static android.Manifest.permission.ACCESS_FINE_LOCATION;
 public class FirebaseUIActivity extends AppCompatActivity implements LocationListener {
     private static final int RC_SIGN_IN = 123;
     public static final int REQUEST_LOCATION = 1000;
-    public static final int START_MAPS_ACTIVITY = 2000;
+//    public static final int START_MAPS_ACTIVITY = 2000;
     // Firebase instance variables
     private FirebaseAuth firebaseAuth;
     private FirebaseAuth.AuthStateListener authStateListener;
@@ -60,6 +60,7 @@ public class FirebaseUIActivity extends AppCompatActivity implements LocationLis
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        // bind view for better performance
         binding = ActivityFirebaseUiBinding.inflate(getLayoutInflater());
         View view = binding.getRoot();
         setContentView(view);
@@ -124,8 +125,6 @@ public class FirebaseUIActivity extends AppCompatActivity implements LocationLis
                 Toast.makeText(this, response.getError().getMessage(), Toast.LENGTH_SHORT).show();
                 finish();
             }
-        } else if (requestCode == START_MAPS_ACTIVITY && resultCode == RESULT_OK) {
-
         }
     }
 
@@ -187,13 +186,14 @@ public class FirebaseUIActivity extends AppCompatActivity implements LocationLis
     }
 
 
+    // if user has granted permission for location go to MapsActivity
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (requestCode == REQUEST_LOCATION && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
             if (ActivityCompat.checkSelfPermission(this, ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
                 manager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this);
-                startActivityForResult(new Intent(getApplicationContext(), MapsActivity.class), START_MAPS_ACTIVITY);
+                startActivity(new Intent(getApplicationContext(), MapsActivity.class));
             }
         }
     }
@@ -212,26 +212,6 @@ public class FirebaseUIActivity extends AppCompatActivity implements LocationLis
     public void onProviderDisabled(@NonNull String provider) {
     }
 
-    public void showGPSDiabledDialog() {
-        AlertDialog.Builder alertDialog = new AlertDialog.Builder(this);
-        alertDialog.setTitle(getString(R.string.gps_title));
-        alertDialog.setMessage(getString(R.string.gps_message));
-        alertDialog.setPositiveButton(getString(R.string.gps_yes), new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                Intent onGPS = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-                startActivity(onGPS);
-            }
-        }).setNegativeButton(getString(R.string.gps_no), new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                onBackPressed();
-            }
-        });
-        alertDialog.create();
-        alertDialog.show();
-    }
-
 
     /*
     Method used to check firebase realtime database about wich role has the current user. If the user
@@ -240,7 +220,7 @@ public class FirebaseUIActivity extends AppCompatActivity implements LocationLis
     the nearest hospital and add appointmet
      */
     private void roleCheck(FirebaseUser firebaseUser) {
-        // if the user is a doctor he can go to HospitalListActivity
+        // if the user is a doctor setup the ui
         DatabaseReference roleDoctor = claimsDatabaseReference.child(firebaseUser.getUid()).child(DOCTOR);
         roleDoctor.addValueEventListener(new ValueEventListener() {
             @Override
@@ -269,11 +249,12 @@ public class FirebaseUIActivity extends AppCompatActivity implements LocationLis
 
         });
 
-        // if the user is a patient or if the user has never signed in before he can go to MapsActivity
+        // if the user is a patient or if the user has never signed in before
         DatabaseReference rolePatient = claimsDatabaseReference.child(firebaseUser.getUid()).child(PATIENT);
         rolePatient.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
+                // if the user has signed in before setup the ui for patients
                 if(dataSnapshot.exists()){
                     boolean isPatient = dataSnapshot.getValue(boolean.class);
                     if(isPatient) {
@@ -282,13 +263,13 @@ public class FirebaseUIActivity extends AppCompatActivity implements LocationLis
                         binding.findHospital.setOnClickListener(v -> gps(v));
                     }
                 }else {
+                    // if the user has never signed in before setup the ui for patients and add uid in db
                     claimsDatabaseReference.child(firebaseUser.getUid()).child(PATIENT).setValue(true);
                     claimsDatabaseReference.child(firebaseUser.getUid()).child(DOCTOR).setValue(false);
                     binding.loginMessage.setText(getString(R.string.user_login_message));
                     binding.findHospital.setText(getString(R.string.search_hospital));
                     binding.findHospital.setOnClickListener(v -> gps(v));
                 }
-
             }
 
             @Override
@@ -300,23 +281,49 @@ public class FirebaseUIActivity extends AppCompatActivity implements LocationLis
     }
 
     /*
-    Method used to check if the gps is enabled, if access to location is permited and opens Maps activity
+    Method used by patients to check if the gps is enabled, if access to location is permited and opens Maps activity
      */
-
     private void gps(View view) {
+        // if gps is not enabled show message that asks to enable it
         if (!manager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
             showGPSDiabledDialog();
         } else {
+            // if permission is not granted ask for it
             if (ActivityCompat.checkSelfPermission(this, ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
                 ActivityCompat.requestPermissions(this, new String[]{ACCESS_FINE_LOCATION}, REQUEST_LOCATION);
             } else {
+                // if permission is granted go to MapsActivity
                 manager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this);
-                startActivityForResult(new Intent(getApplicationContext(), MapsActivity.class), START_MAPS_ACTIVITY);
+                startActivity(new Intent(getApplicationContext(), MapsActivity.class));
             }
         }
     }
 
+    // method for user that is doctor to go to HospitalListActivity
     private void showHospitals(View view) {
                 startActivity(new Intent(getApplicationContext(), HospitalListActivity.class));
+    }
+
+    // if gps is not enabled shows dialog that informs user to enable it from phone settings
+    public void showGPSDiabledDialog() {
+        AlertDialog.Builder alertDialog = new AlertDialog.Builder(this);
+        alertDialog.setTitle(getString(R.string.gps_title));
+        alertDialog.setMessage(getString(R.string.gps_message));
+        alertDialog.setPositiveButton(getString(R.string.gps_yes), new DialogInterface.OnClickListener() {
+            // if user agrees to enable gps go to system settings
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                Intent onGPS = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+                startActivity(onGPS);
+            }
+        }).setNegativeButton(getString(R.string.gps_no), new DialogInterface.OnClickListener() {
+            // if user selects no dialog disappears
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                onBackPressed();
+            }
+        });
+        alertDialog.create();
+        alertDialog.show();
     }
 }

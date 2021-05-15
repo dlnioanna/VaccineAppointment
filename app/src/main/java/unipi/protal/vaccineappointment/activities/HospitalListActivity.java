@@ -53,7 +53,7 @@ public class HospitalListActivity extends AppCompatActivity implements HospitalA
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
-                // Getting hospitals failed, log a message
+                // Getting hospitals failed, show a message
                 Toast.makeText(getApplicationContext(), databaseError.getMessage(), Toast.LENGTH_SHORT).show();
 
             }

@@ -85,13 +85,16 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         firebaseDatabase = FirebaseDatabase.getInstance();
         databaseReference = firebaseDatabase.getReference().child(VACCINE_POINTS);
         hospitalList = new ArrayList<>();
+        // read data stored in firebase and add to list
         databaseReference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                    // cast data to Hospital object
                     Hospital hospital = snapshot.getValue(Hospital.class);
                     hospitalList.add(hospital);
                 }
+                // if current location is retrieved calculate distance and update ui
                 if (currentLocation != null) {
                     calculateDistance(currentLocation);
                     binding.firebaseProgressBar.setVisibility(View.GONE);
@@ -110,6 +113,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
+
+        // additional options for map view
         binding.btnMap.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -149,18 +154,21 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mMap = googleMap;
         mapReady = true;
         try {
+            // when map loads get current location and add a circle
             position = new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude());
             circleOptions = new CircleOptions().center(position).radius(30).strokeColor(Color.BLUE).fillColor(Color.BLUE);
             circle = mMap.addCircle(circleOptions);
         } catch (NullPointerException ne) {
             ne.printStackTrace();
         }
+        // camera shows current location
         CameraPosition target = CameraPosition.builder().target(position).zoom(14).build();
         mMap.moveCamera(CameraUpdateFactory.newCameraPosition(target));
         mMap.animateCamera(CameraUpdateFactory.newCameraPosition(target), 2000, null);
 
     }
 
+    // when user clicks on a hospital Appointment acticity starts
     @Override
     public void onListItemClick(int clickedItemIndex) {
         Intent i = new Intent(this, AppointmentActivity.class);
@@ -168,10 +176,13 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         startActivityForResult(i, START_APOINTMENT_ACTIVITY);
     }
 
+    /*
+    recalculate distance enery time location changes. If current location has not been retrieved yet
+    it gets initialised. On every location change ui is updated
+    */
     @Override
     public void onLocationChanged(@NonNull Location location) {
         currentLocation = location;
-        Log.e("onLocationChanged", location.getLatitude()+" "+location.getLongitude());
         if (hospitalsByDistance == null) {
             calculateDistance(currentLocation);
             binding.firebaseProgressBar.setVisibility(View.GONE);
@@ -191,7 +202,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     }
 
+    /*
+    based on the list created checks the distance fore each hospital and creates new ordered list
+    Adapter is created based on the ordered list
+     */
     private void createAdapter() {
+        // order hospital list based on distance
         hospitalsByDistance = hospitalList.stream()
                 .sorted(Comparator.comparing(Hospital::getDistance))
                 .collect(Collectors.toList());
@@ -204,6 +220,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         binding.hospitalRecyclerView.setAdapter(hospitalAdapter);
     }
 
+    // method to calculate distance for each hospital and user's current location
     private void calculateDistance(Location location) {
         for (Hospital hospital : hospitalList) {
             Location hospitalLocation = new Location(hospital.getTitle());
@@ -214,6 +231,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         }
     }
 
+    //necessary for using location manager
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
@@ -235,6 +253,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     }
 
+    // after user has saved an appointment the activity finished so that user returns to first screen
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -245,12 +264,13 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         }
     }
 
+    //save data to prevent losing them on screen rotation when app is running but not shown
     @Override
     protected void onSaveInstanceState(@NonNull Bundle outState) {
         outState.putParcelable("current_location", currentLocation);
         super.onSaveInstanceState(outState);
     }
-
+    // restore data that have been saved on onSaveInstanceState
     @Override
     protected void onRestoreInstanceState(@NonNull Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
