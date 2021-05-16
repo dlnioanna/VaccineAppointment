@@ -1,29 +1,21 @@
 package unipi.protal.vaccineappointment.activities;
 
-import android.app.Activity;
-import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
-
 import androidx.appcompat.app.AppCompatActivity;
-
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
-
 import java.util.ArrayList;
-
 import unipi.protal.vaccineappointment.R;
 import unipi.protal.vaccineappointment.databinding.ActivityAppointmentListBinding;
 import unipi.protal.vaccineappointment.entities.Appointment;
 import unipi.protal.vaccineappointment.entities.Hospital;
 import unipi.protal.vaccineappointment.utils.AppointmentAdapter;
-
 import static unipi.protal.vaccineappointment.activities.FirebaseUIActivity.APPOINTMENTS;
 import static unipi.protal.vaccineappointment.activities.FirebaseUIActivity.TITLE;
 import static unipi.protal.vaccineappointment.activities.FirebaseUIActivity.VACCINE_POINTS;
@@ -50,6 +42,9 @@ public class AppointmentListActivity extends AppCompatActivity{
         binding.hospitalAppointmentRecyclerViewTitle.setText(getString(R.string.list_of_appointments_title)+" "+hospital.getTitle());
         firebaseDatabase = FirebaseDatabase.getInstance();
         databaseReference = firebaseDatabase.getReference(VACCINE_POINTS);
+        /*
+        query the database to get the uid of the hospital selected on previous activity
+         */
         Query query = databaseReference.orderByChild(TITLE).equalTo(hospital.getTitle());
         query.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -58,7 +53,6 @@ public class AppointmentListActivity extends AppCompatActivity{
                     for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                         hospitalId = snapshot.getKey();
                         getAppointmentList(hospitalId);
-                        Log.e("hospital id",hospitalId);
                     }
                 }
             }
@@ -71,7 +65,7 @@ public class AppointmentListActivity extends AppCompatActivity{
         appointmentList = new ArrayList<>();
 
     }
-
+// read all appointments from db and populate adapter
     private void getAppointmentList(String id) {
         binding.firebaseProgressBar.setVisibility(View.VISIBLE);
         databaseReference.child(id).child(APPOINTMENTS).addValueEventListener(new ValueEventListener() {
@@ -85,12 +79,13 @@ public class AppointmentListActivity extends AppCompatActivity{
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
-                // Getting hospitals failed, log a message
+                // Getting hospitals failed, show a message
                 Toast.makeText(getApplicationContext(), databaseError.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
     }
 
+    // populate AppointmentAdapter with data from database and load ui
     private void createAdapter() {
         appointmentAdapter = new AppointmentAdapter(appointmentList);
         binding.appointmentRecyclerView.setAdapter(appointmentAdapter);

@@ -47,12 +47,18 @@ public class AppointmentActivity extends AppCompatActivity {
         binding = ActivityAppointmentBinding.inflate(getLayoutInflater());
         View view = binding.getRoot();
         setContentView(view);
+        // get selected hospital from previous activity
         hospital = getIntent().getParcelableExtra("hospital");
         firebaseAuth = FirebaseAuth.getInstance();
         firebaseDatabase = FirebaseDatabase.getInstance();
         databaseReference = firebaseDatabase.getReference(VACCINE_POINTS);
         user = firebaseAuth.getCurrentUser();
         binding.appointmentHospitalTitle.setText(hospital.getTitle());
+        /*
+        on click calendar window opens to select date
+        after user selects date for first dose, the date for second dose is automatically
+        created after 28 days
+         */
         binding.datePickerImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -84,6 +90,11 @@ public class AppointmentActivity extends AppCompatActivity {
                 mDatePicker.show();
             }
         });
+     /*
+        on click clock window opens to select time
+        after user selects time for first dose, the time for second dose is automatically
+        created as the same time
+         */
         binding.timePickerImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -96,6 +107,7 @@ public class AppointmentActivity extends AppCompatActivity {
                         timeDoseOne = String.format("%02d:%02d", selectedHour, selectedMinute);
                         binding.selectedTime.setText(String.format("%02d:%02d", selectedHour, selectedMinute));
                         if (dateDoseOne != null) {
+                            // only after first and second doses are defined they are shown
                             binding.firstDose.setText(getString(R.string.first_dose) + dateDoseOne + " και ώρα " + timeDoseOne);
                             binding.dateOneLinearLayout.setVisibility(View.VISIBLE);
                             binding.secondDose.setText(getString(R.string.second_dose) + dateDoseTwo + " και ώρα " + timeDoseOne);
@@ -110,8 +122,10 @@ public class AppointmentActivity extends AppCompatActivity {
         binding.saveAppointment.setOnClickListener(v -> saveApointment());
     }
 
+    // when user saves appointment it is stored on database
     private void saveApointment() {
         if (checkFields()) {
+            // get the selected hospital and retrieve appointments node to save user's appointment
             Query query = databaseReference.orderByChild(TITLE).equalTo(hospital.getTitle());
             query.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
@@ -124,6 +138,7 @@ public class AppointmentActivity extends AppCompatActivity {
                                 binding.telephoneAppointment.getText().toString(), dateDoseOne, timeDoseOne, dateDoseTwo);
                         databaseReference.child(hospitalId).child(APPOINTMENTS).child(user.getUid()).setValue(appointment);
                     }
+                    // after saving appointment return to previous activity
                     Intent returnIntent = new Intent();
                     setResult(Activity.RESULT_OK, returnIntent);
                     finish();
@@ -137,6 +152,7 @@ public class AppointmentActivity extends AppCompatActivity {
         }
     }
 
+    // method used to check if user has filled requested data
     private boolean checkFields() {
         if (binding.nameAppointment.getText() != null && !binding.nameAppointment.getText().equals("")
                 && binding.lastNameAppointment.getText() != null && !binding.lastNameAppointment.getText().equals("")
@@ -149,6 +165,7 @@ public class AppointmentActivity extends AppCompatActivity {
         }
     }
 
+    // save data to prevent losing them on screen rotation when app is running but not shown
     @Override
     protected void onSaveInstanceState(@NonNull Bundle outState) {
         outState.putParcelable("f_user", user);
@@ -159,6 +176,8 @@ public class AppointmentActivity extends AppCompatActivity {
         outState.putString("time", timeDoseOne);
         super.onSaveInstanceState(outState);
     }
+
+    // restore data that have been saved on onSaveInstanceState
 
     @Override
     protected void onRestoreInstanceState(@NonNull Bundle savedInstanceState) {
@@ -181,6 +200,7 @@ public class AppointmentActivity extends AppCompatActivity {
         dateDoseTwo = String.format("%02d-%02d-%04d", calendar.get(Calendar.DAY_OF_MONTH), calendar.get(Calendar.MONTH)
                 , calendar.get(Calendar.YEAR));
         binding.selectedTime.setText(timeDoseOne);
+        // only after first and second doses are defined they are shown
         if ((dateDoseOne != null)&&(timeDoseOne != null)) {
             binding.firstDose.setText(getString(R.string.first_dose) + dateDoseOne + " και ώρα " + timeDoseOne);
             binding.dateOneLinearLayout.setVisibility(View.VISIBLE);

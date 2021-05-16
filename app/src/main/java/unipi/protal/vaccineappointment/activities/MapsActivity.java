@@ -161,14 +161,14 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         } catch (NullPointerException ne) {
             ne.printStackTrace();
         }
-        // camera shows current location
+        // camera focus on current location
         CameraPosition target = CameraPosition.builder().target(position).zoom(14).build();
         mMap.moveCamera(CameraUpdateFactory.newCameraPosition(target));
         mMap.animateCamera(CameraUpdateFactory.newCameraPosition(target), 2000, null);
 
     }
 
-    // when user clicks on a hospital Appointment acticity starts
+    // when user clicks on a hospital Appointment acticity starts waiting for result when appointment is saved
     @Override
     public void onListItemClick(int clickedItemIndex) {
         Intent i = new Intent(this, AppointmentActivity.class);

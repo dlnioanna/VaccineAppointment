@@ -14,14 +14,13 @@ import unipi.protal.vaccineappointment.entities.Appointment;
 
 public class AppointmentAdapter extends RecyclerView.Adapter<AppointmentAdapter.AppointmentViewHolder> {
     private List<Appointment> appointmentList;
-    private int numOfAppointments;
     private Context context;
 
     public AppointmentAdapter(List<Appointment> appointments) {
         appointmentList=appointments;
-        numOfAppointments = appointmentList.size();
     }
 
+    //called right when the adapter is created and is used to initialize viewholder.
     @NonNull
     @Override
     public AppointmentAdapter.AppointmentViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -32,6 +31,10 @@ public class AppointmentAdapter extends RecyclerView.Adapter<AppointmentAdapter.
         return viewHolder;
     }
 
+    /*
+      update the RecyclerView.ViewHolder contents with the item
+      at the given position
+      */
     @Override
     public void onBindViewHolder(@NonNull AppointmentAdapter.AppointmentViewHolder holder, int position) {
         String first = context.getResources().getString(R.string.first_dose);

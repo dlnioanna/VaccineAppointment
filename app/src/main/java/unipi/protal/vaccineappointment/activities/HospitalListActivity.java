@@ -39,6 +39,7 @@ public class HospitalListActivity extends AppCompatActivity implements HospitalA
 
     }
 
+// retireve all the hospitals stored in database and add then to hospitalList
     private void getHospitalList() {
         binding.firebaseProgressBar.setVisibility(View.VISIBLE);
         databaseReference.addValueEventListener(new ValueEventListener() {
@@ -60,12 +61,16 @@ public class HospitalListActivity extends AppCompatActivity implements HospitalA
         });
     }
 
+    // after getting alla the data from db populate the adapter with the data from hospitalList
     private void createAdapter() {
         hospitalAdapter = new HospitalAdapter(hospitalList, this);
         binding.hospitalRecyclerView.setAdapter(hospitalAdapter);
         binding.firebaseProgressBar.setVisibility(View.GONE);
     }
 
+
+    // override method from HospitalAdapter.ListItemClickListener so that every time a hospital is clicked
+    // go to AppointmentListActivity
     @Override
     public void onListItemClick(int clickedItemIndex) {
         Intent i = new Intent(this, AppointmentListActivity.class);
